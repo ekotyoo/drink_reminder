@@ -1,4 +1,3 @@
-import 'package:drink_reminder/features/hydration_reminder/presentation/pages/current_hidration_page.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/pages/landing_page.dart';
 import 'package:flutter/material.dart';
 

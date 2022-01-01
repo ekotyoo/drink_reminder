@@ -1,5 +1,6 @@
 import 'package:drink_reminder/common/colors.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/pages/current_hidration_page.dart';
+import 'package:drink_reminder/features/hydration_reminder/presentation/pages/drink_page.dart';
 import 'package:flutter/material.dart';
 
 class LandingPage extends StatefulWidget {
@@ -13,7 +14,7 @@ class _LandingPageState extends State<LandingPage> {
   late PageController _pageController;
   final int _initialPage = 0;
   int _selectedPage = 0;
-  double _animatedPaddingValue = 40;
+  double _animatedPaddingValue = 38.2;
 
   @override
   void initState() {
@@ -28,16 +29,14 @@ class _LandingPageState extends State<LandingPage> {
   }
 
   void animateToPage(int index) {
-    setState(() {
-      _pageController.animateToPage(index,
-          duration: const Duration(milliseconds: 500), curve: Curves.ease);
-      moveBottomNavigationIndicator(index);
-    });
+    _pageController.animateToPage(index,
+        duration: const Duration(milliseconds: 500), curve: Curves.ease);
+
+    moveBottomNavigationIndicator(index);
   }
 
   void moveBottomNavigationIndicator(int index) {
     setState(() {
-      _selectedPage = index;
       if (index == 0) {
         _animatedPaddingValue =
             ((MediaQuery.of(context).size.width / (3 - index)) * (index)) +
@@ -50,6 +49,7 @@ class _LandingPageState extends State<LandingPage> {
             (MediaQuery.of(context).size.width / (3 - index) - 80) - 38.2;
       }
     });
+    _selectedPage = index;
   }
 
   @override
@@ -59,15 +59,11 @@ class _LandingPageState extends State<LandingPage> {
         children: [
           PageView(
             onPageChanged: (value) {
-              setState(() {
-                moveBottomNavigationIndicator(value);
-              });
+              moveBottomNavigationIndicator(value);
             },
             controller: _pageController,
             children: [
-              Container(
-                color: Colors.white,
-              ),
+              const DrinkPage(),
               const CurrentHidrationPage(),
               Container(
                 color: Colors.white,
