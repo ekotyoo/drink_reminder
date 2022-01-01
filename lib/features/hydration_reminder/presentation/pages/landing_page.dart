@@ -14,7 +14,6 @@ class _LandingPageState extends State<LandingPage> {
   late PageController _pageController;
   final int _initialPage = 0;
   int _selectedPage = 0;
-  double _animatedPaddingValue = 38.2;
 
   @override
   void initState() {
@@ -31,25 +30,6 @@ class _LandingPageState extends State<LandingPage> {
   void animateToPage(int index) {
     _pageController.animateToPage(index,
         duration: const Duration(milliseconds: 500), curve: Curves.ease);
-
-    moveBottomNavigationIndicator(index);
-  }
-
-  void moveBottomNavigationIndicator(int index) {
-    setState(() {
-      if (index == 0) {
-        _animatedPaddingValue =
-            ((MediaQuery.of(context).size.width / (3 - index)) * (index)) +
-                38.2;
-      } else if (index == 1) {
-        _animatedPaddingValue =
-            (MediaQuery.of(context).size.width / (3 - index)) - 40;
-      } else {
-        _animatedPaddingValue =
-            (MediaQuery.of(context).size.width / (3 - index) - 80) - 38.2;
-      }
-    });
-    _selectedPage = index;
   }
 
   @override
@@ -59,7 +39,9 @@ class _LandingPageState extends State<LandingPage> {
         children: [
           PageView(
             onPageChanged: (value) {
-              moveBottomNavigationIndicator(value);
+              setState(() {
+                _selectedPage = value;
+              });
             },
             controller: _pageController,
             children: [
@@ -72,91 +54,169 @@ class _LandingPageState extends State<LandingPage> {
           ),
           Align(
             alignment: Alignment.bottomCenter,
+            child: CustomBottomNavigationBar(
+              onTap: (index) => animateToPage(index),
+              currentIndex: _selectedPage,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CustomBottomNavigationBar extends StatefulWidget {
+  const CustomBottomNavigationBar(
+      {Key? key, this.onTap, required this.currentIndex})
+      : super(key: key);
+
+  final Function(int)? onTap;
+  final int currentIndex;
+
+  @override
+  _CustomBottomNavigationBarState createState() =>
+      _CustomBottomNavigationBarState();
+}
+
+class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar>
+    with SingleTickerProviderStateMixin {
+  late ColorTween _colorTween;
+  late AnimationController _animationController;
+  double indicatorPosition = 38.2;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 500));
+    _colorTween = ColorTween(begin: MyColor.blackColor, end: Colors.white);
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _animationController.dispose();
+  }
+
+  void moveBottomNavigationIndicator(int index) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+
+    switch (index) {
+      case 0:
+        indicatorPosition = ((screenWidth / (3 - index)) * (index)) + 38.2;
+        break;
+      case 1:
+        indicatorPosition = (screenWidth / (3 - index)) - 40;
+        break;
+      default:
+        indicatorPosition = (screenWidth / (3 - index) - 80) - 38.2;
+    }
+
+    _animationController.reset();
+    _animationController.forward();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    moveBottomNavigationIndicator(widget.currentIndex);
+    return Container(
+      padding: const EdgeInsets.only(bottom: 24),
+      child: Stack(
+        children: [
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.ease,
+            left: indicatorPosition,
             child: Container(
-              padding: const EdgeInsets.only(bottom: 24),
-              child: Stack(
-                children: [
-                  AnimatedPositioned(
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.ease,
-                    left: _animatedPaddingValue,
-                    child: Container(
-                      height: 60,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        color: MyColor.blackColor,
-                      ),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          animateToPage(0);
-                        },
-                        child: Container(
-                          height: 60,
-                          width: 80,
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: Icon(
-                            Icons.check_box_outline_blank_rounded,
-                            size: 30,
-                            color: _selectedPage == 0
-                                ? Colors.white
-                                : MyColor.blackColor,
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          animateToPage(1);
-                        },
-                        child: Container(
-                          height: 60,
-                          width: 80,
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: Icon(
-                            Icons.circle_outlined,
-                            size: 30,
-                            color: _selectedPage == 1
-                                ? Colors.white
-                                : MyColor.blackColor,
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          animateToPage(2);
-                        },
-                        child: Container(
-                          height: 60,
-                          width: 80,
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: Icon(
-                            Icons.indeterminate_check_box_outlined,
-                            size: 30,
-                            color: _selectedPage == 2
-                                ? Colors.white
-                                : MyColor.blackColor,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+              height: 60,
+              width: 80,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                color: MyColor.blackColor,
               ),
             ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              InkWell(
+                onTap: () {
+                  widget.onTap?.call(0);
+                  moveBottomNavigationIndicator(0);
+                },
+                child: Container(
+                  height: 60,
+                  width: 80,
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: AnimatedBuilder(
+                    animation: _colorTween.animate(_animationController),
+                    builder: (context, child) {
+                      return Icon(
+                        Icons.check_box_outline_blank_rounded,
+                        size: 30,
+                        color: widget.currentIndex == 0
+                            ? _colorTween.evaluate(_animationController)
+                            : MyColor.blackColor,
+                      );
+                    },
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  widget.onTap?.call(1);
+                  moveBottomNavigationIndicator(1);
+                },
+                child: Container(
+                  height: 60,
+                  width: 80,
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: AnimatedBuilder(
+                      animation: _colorTween.animate(_animationController),
+                      builder: (context, child) {
+                        return Icon(
+                          Icons.circle_outlined,
+                          size: 30,
+                          color: widget.currentIndex == 1
+                              ? _colorTween.evaluate(_animationController)
+                              : MyColor.blackColor,
+                        );
+                      }),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  widget.onTap?.call(2);
+                  moveBottomNavigationIndicator(2);
+                },
+                child: Container(
+                  height: 60,
+                  width: 80,
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: AnimatedBuilder(
+                      animation: _colorTween.animate(_animationController),
+                      builder: (context, child) {
+                        return Icon(
+                          Icons.indeterminate_check_box_outlined,
+                          size: 30,
+                          color: widget.currentIndex == 2
+                              ? _colorTween.evaluate(_animationController)
+                              : MyColor.blackColor,
+                        );
+                      }),
+                ),
+              ),
+            ],
           ),
         ],
       ),

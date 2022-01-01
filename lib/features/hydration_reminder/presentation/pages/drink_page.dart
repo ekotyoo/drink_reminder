@@ -76,11 +76,10 @@ class WaveClipper extends CustomClipper<Path> {
   getClip(Size size) {
     final clippedPath = Path();
 
-    clippedPath.moveTo(0, 0);
     clippedPath.lineTo(0, size.height);
-    clippedPath.lineTo(0, size.width);
     clippedPath.lineTo(size.width, size.height);
     clippedPath.lineTo(size.width, 0);
+    clippedPath.close();
 
     return clippedPath;
   }

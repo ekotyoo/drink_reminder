@@ -28,7 +28,8 @@ class _CurrentHidrationPageState extends State<CurrentHidrationPage>
     _progressAnimation = Tween<double>(begin: 0, end: currentProgress).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.ease));
 
-    _animationController.forward();
+    Future.delayed(const Duration(milliseconds: 300))
+        .then((value) => _animationController.forward());
   }
 
   @override
