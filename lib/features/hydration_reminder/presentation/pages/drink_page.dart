@@ -52,14 +52,20 @@ class _DrinkPageState extends State<DrinkPage>
               bottom: 150,
               left: 0,
               right: 0,
-              child: Container(
-                height: 80,
-                width: 80,
-                decoration: const BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.white),
-                child: const Icon(
-                  Icons.add,
-                  size: 30,
+              child: FadeTransition(
+                opacity: _animation,
+                child: SlideTransition(
+                  position: _offsetAnimation,
+                  child: Container(
+                    height: 80,
+                    width: 80,
+                    decoration: const BoxDecoration(
+                        shape: BoxShape.circle, color: Colors.white),
+                    child: const Icon(
+                      Icons.add,
+                      size: 30,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -114,10 +120,12 @@ class Wave extends StatefulWidget {
 class _WaveState extends State<Wave> with TickerProviderStateMixin {
   late AnimationController _animationController1;
   late AnimationController _animationController2;
+  late AnimationController _animationController3;
   late List<Offset> _points;
 
   @override
   void initState() {
+    super.initState();
     _animationController1 = AnimationController(
         vsync: this,
         duration: const Duration(milliseconds: 10000),
@@ -128,15 +136,23 @@ class _WaveState extends State<Wave> with TickerProviderStateMixin {
         duration: const Duration(milliseconds: 9000),
         upperBound: 2 * pi);
 
-    _animationController1.repeat();
-    _animationController2.repeat();
-    super.initState();
+    _animationController3 = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+
+    Future.delayed(const Duration(milliseconds: 300)).then((value) {
+      _animationController1.repeat();
+      _animationController2.repeat();
+      _animationController3.forward();
+    });
   }
 
   @override
   void dispose() {
     _animationController1.dispose();
     _animationController2.dispose();
+    _animationController3.dispose();
     super.dispose();
   }
 
@@ -182,6 +198,27 @@ class _WaveState extends State<Wave> with TickerProviderStateMixin {
                 ),
               );
             }),
+        Positioned(
+          left: 20,
+          top: 20,
+          child: AnimatedBuilder(
+              animation: _animationController3,
+              builder: (context, child) {
+                return Row(
+                  children: [
+                    const Icon(
+                      Icons.arrow_right_rounded,
+                      size: 30,
+                      color: MyColor.blueColor,
+                    ),
+                    Text(
+                      "${(_animationController3.value * 0.5 * 100).toInt()}%",
+                      style: MyStyles.extraLarge.copyWith(fontSize: 36),
+                    ),
+                  ],
+                );
+              }),
+        ),
       ],
     );
   }

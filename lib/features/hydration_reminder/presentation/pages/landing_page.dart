@@ -112,8 +112,6 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar>
       default:
         indicatorPosition = (screenWidth / (3 - index) - 80) - 38.2;
     }
-
-    _animationController.reset();
     _animationController.forward();
   }
 
@@ -156,7 +154,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar>
                     animation: _colorTween.animate(_animationController),
                     builder: (context, child) {
                       return Icon(
-                        Icons.check_box_outline_blank_rounded,
+                        Icons.bubble_chart,
                         size: 30,
                         color: widget.currentIndex == 0
                             ? _colorTween.evaluate(_animationController)
@@ -207,7 +205,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar>
                       animation: _colorTween.animate(_animationController),
                       builder: (context, child) {
                         return Icon(
-                          Icons.indeterminate_check_box_outlined,
+                          Icons.now_widgets_rounded,
                           size: 30,
                           color: widget.currentIndex == 2
                               ? _colorTween.evaluate(_animationController)
