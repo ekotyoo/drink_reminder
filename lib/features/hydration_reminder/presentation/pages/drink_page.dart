@@ -24,8 +24,8 @@ class _DrinkPageState extends State<DrinkPage>
         vsync: this, duration: const Duration(milliseconds: 1000));
     _animation = Tween<double>(begin: 0, end: 1).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.ease));
-    _offsetAnimation = Tween<Offset>(begin: Offset(0, 1), end: Offset.zero)
-        .animate(
+    _offsetAnimation =
+        Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero).animate(
             CurvedAnimation(parent: _animationController, curve: Curves.ease));
     _animationController.forward();
   }
@@ -142,12 +142,8 @@ class _WaveState extends State<Wave> with TickerProviderStateMixin {
 
   List<Offset> initPoints() {
     List<Offset> points = [];
-    Random r = Random();
     for (int i = 0; i < MediaQuery.of(context).size.width.toInt(); i++) {
       double x = i.toDouble();
-
-      // Set this point's y-coordinate to a random value
-      // no greater than 80% of the container's height
       double y = 0;
 
       points.add(Offset(x, y));
@@ -192,8 +188,8 @@ class _WaveState extends State<Wave> with TickerProviderStateMixin {
 }
 
 class WaveClipper extends CustomClipper<Path> {
-  double _value;
-  List<Offset> _wavePoints;
+  final double _value;
+  final List<Offset> _wavePoints;
 
   WaveClipper(this._value, this._wavePoints);
 
@@ -211,7 +207,6 @@ class WaveClipper extends CustomClipper<Path> {
 
   void _makeSinWave(Size size) {
     final double amplitude = size.height / 10;
-    final yOffset = amplitude;
 
     for (var x = 0; x < size.width - 1; x++) {
       double y = amplitude * sin(x * 0.015 - _value) + 50;
