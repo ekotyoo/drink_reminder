@@ -19,8 +19,6 @@ class _DrinkPageState extends State<DrinkPage>
   late Animation<double> _animation;
   late Animation<Offset> _offsetAnimation;
 
-  final _target = 1290;
-
   @override
   void initState() {
     super.initState();
