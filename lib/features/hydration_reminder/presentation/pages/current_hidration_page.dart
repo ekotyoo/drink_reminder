@@ -15,7 +15,7 @@ class _CurrentHidrationPageState extends State<CurrentHidrationPage>
   late AnimationController _animationController;
   late Animation<double> _progressAnimation;
 
-  final double currentProgress = 0.50;
+  final double currentProgress = 0.8;
 
   @override
   void initState() {
