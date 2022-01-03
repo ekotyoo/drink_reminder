@@ -1,3 +1,4 @@
+import 'package:drink_reminder/common/theme.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/pages/landing_page.dart';
 import 'package:flutter/material.dart';
 
@@ -13,9 +14,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: MyTheme.light(),
+      darkTheme: MyTheme.dark(),
       home: const LandingPage(),
     );
   }

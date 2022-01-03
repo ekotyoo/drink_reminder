@@ -1,7 +1,5 @@
 import 'dart:math';
 
-import 'package:drink_reminder/common/colors.dart';
-import 'package:drink_reminder/common/styles.dart';
 import 'package:flutter/material.dart';
 
 class Wave extends StatefulWidget {
@@ -23,7 +21,6 @@ class _WaveState extends State<Wave> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    super.initState();
     _animationController1 = AnimationController(
         vsync: this,
         duration: const Duration(milliseconds: 10000),
@@ -40,6 +37,7 @@ class _WaveState extends State<Wave> with TickerProviderStateMixin {
     );
 
     startAnimation();
+    super.initState();
   }
 
   @override
@@ -90,7 +88,7 @@ class _WaveState extends State<Wave> with TickerProviderStateMixin {
                       : _screenSize.height * _percentage +
                           _screenSize.height * 0.05,
                   decoration: BoxDecoration(
-                    color: MyColor.primaryColor.withOpacity(0.4),
+                    color: Theme.of(context).primaryColor.withOpacity(0.4),
                   ),
                 ),
               );
@@ -108,7 +106,7 @@ class _WaveState extends State<Wave> with TickerProviderStateMixin {
                       : _screenSize.height * _percentage +
                           _screenSize.height * 0.05,
                   decoration: BoxDecoration(
-                    color: MyColor.primaryColor.withOpacity(0.4),
+                    color: Theme.of(context).primaryColor.withOpacity(0.4),
                   ),
                 ),
               );
@@ -121,14 +119,16 @@ class _WaveState extends State<Wave> with TickerProviderStateMixin {
               builder: (context, child) {
                 return Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.arrow_right_rounded,
                       size: 30,
-                      color: MyColor.blueColor,
+                      color: Theme.of(context).primaryColor,
                     ),
                     Text(
                       "${(_animationController3.value * _percentage * 100).toInt()}%",
-                      style: MyStyles.extraLarge.copyWith(fontSize: 36),
+                      style: Theme.of(context).textTheme.headline4!.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.secondary),
                     ),
                   ],
                 );

@@ -1,5 +1,3 @@
-import 'package:drink_reminder/common/colors.dart';
-import 'package:drink_reminder/common/styles.dart';
 import 'package:drink_reminder/features/hydration_reminder/domain/entities/cup.dart';
 import 'package:flutter/material.dart';
 
@@ -59,14 +57,19 @@ class CupItem extends StatelessWidget {
         height: 70,
         width: 160,
         decoration: BoxDecoration(
-          color: cup.color.withOpacity(0.3),
+          color: Theme.of(context).primaryColor.withOpacity(0.1),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
           children: [
-            Icon(cup.image, color: MyColor.blackColor, size: 24),
+            Icon(cup.image,
+                color: Theme.of(context).colorScheme.secondary, size: 24),
             const SizedBox(width: 8),
-            Text("${cup.capacity} ml", style: MyStyles.subHeading),
+            Text("${cup.capacity} ml",
+                style: Theme.of(context)
+                    .textTheme
+                    .subtitle1!
+                    .copyWith(fontWeight: FontWeight.bold)),
           ],
         ),
       ),

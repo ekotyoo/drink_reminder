@@ -1,8 +1,6 @@
 import 'dart:math';
 import 'dart:ui' as ui;
 
-import 'package:drink_reminder/common/colors.dart';
-import 'package:drink_reminder/common/styles.dart';
 import 'package:flutter/material.dart';
 
 class AnimatedWaterProgress extends AnimatedWidget {
@@ -14,7 +12,8 @@ class AnimatedWaterProgress extends AnimatedWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      painter: WaterProgressPainter(percentage: animation.value),
+      painter: WaterProgressPainter(
+          percentage: animation.value, color: Theme.of(context).primaryColor),
       child: WaterProgress(
         percentage: animation.value,
       ),
@@ -54,7 +53,9 @@ class WaterRemainingValue extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text("-600 ml",
-        style: MyStyles.body.copyWith(color: Colors.grey.withOpacity(0.8)));
+        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).primaryColor));
   }
 }
 
@@ -65,10 +66,10 @@ class WaterDrinkValue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      "1290 ml",
-      style: MyStyles.subHeading,
-    );
+    return Text("1290 ml",
+        style: Theme.of(context).textTheme.subtitle1!.copyWith(
+              fontWeight: FontWeight.w600,
+            ));
   }
 }
 
@@ -82,17 +83,18 @@ class PercentageValue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      "${(percentage * 100).toInt()}%",
-      style: MyStyles.extraLarge,
-    );
+    return Text("${(percentage * 100).toInt()}%",
+        style: Theme.of(context).textTheme.headline3!.copyWith(
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.secondary));
   }
 }
 
 class WaterProgressPainter extends CustomPainter {
   final double percentage;
+  final Color color;
 
-  WaterProgressPainter({required this.percentage});
+  WaterProgressPainter({required this.percentage, required this.color});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -103,7 +105,7 @@ class WaterProgressPainter extends CustomPainter {
       ..strokeWidth = 24
       ..strokeCap = StrokeCap.round
       ..shader = SweepGradient(
-              colors: [MyColor.blueColor.withOpacity(0.1), MyColor.blueColor],
+              colors: [color.withOpacity(0.1), color],
               startAngle: 3 * pi / 2,
               endAngle: 7 * pi / 2,
               tileMode: ui.TileMode.repeated,
@@ -114,7 +116,7 @@ class WaterProgressPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 24
       ..strokeCap = StrokeCap.round
-      ..color = MyColor.blueColor.withOpacity(0.05);
+      ..color = color.withOpacity(0.05);
 
     canvas.drawArc(Rect.fromCircle(center: center, radius: radius),
         -pi / 2 + pi / 14, (2 * pi - 2 * pi / 14), false, backgroundPaint);

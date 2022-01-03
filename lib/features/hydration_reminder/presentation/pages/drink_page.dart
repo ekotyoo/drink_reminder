@@ -1,7 +1,3 @@
-import 'dart:math';
-
-import 'package:drink_reminder/common/colors.dart';
-import 'package:drink_reminder/common/styles.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_model.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/widgets/wave.dart';
 import 'package:flutter/material.dart';
@@ -34,11 +30,16 @@ class _DrinkPageState extends State<DrinkPage>
   }
 
   @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final provider = Provider.of<DrinkModel>(context);
     _animationController.forward();
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Stack(
           children: [
@@ -67,16 +68,20 @@ class _DrinkPageState extends State<DrinkPage>
                   position: _offsetAnimation,
                   child: GestureDetector(
                     onTap: () {
-                      provider.updateDrink(200);
+                      if (_animationController.isCompleted) {
+                        provider.updateDrink(200);
+                      }
                     },
                     child: Container(
                       height: 80,
                       width: 80,
-                      decoration: const BoxDecoration(
-                          shape: BoxShape.circle, color: Colors.white),
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color:
+                              Theme.of(context).primaryColor.withOpacity(0.5)),
                       child: const Icon(
-                        Icons.add,
-                        size: 30,
+                        Icons.add_rounded,
+                        size: 36,
                       ),
                     ),
                   ),
@@ -119,10 +124,17 @@ class AnimatedWaterValue extends AnimatedWidget {
       children: [
         Text(
           "${(animation.value * drinkTarget).toInt()} ml",
-          style: MyStyles.extraLarge,
+          style: Theme.of(context).textTheme.headline3!.copyWith(
+              fontWeight: FontWeight.w800,
+              color: Theme.of(context).colorScheme.secondary),
         ),
-        Text("Remaining: ${drinkTarget - currentDrink} ml",
-            style: MyStyles.subHeading),
+        Text(
+          "Remaining: ${drinkTarget - currentDrink} ml",
+          style: Theme.of(context)
+              .textTheme
+              .subtitle1!
+              .copyWith(fontWeight: FontWeight.bold),
+        ),
       ],
     );
   }

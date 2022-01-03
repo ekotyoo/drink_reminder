@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class MyColor {
   static const primaryColor = Color(0xFF37CAEC);
@@ -8,4 +8,6 @@ class MyColor {
   static const blueColor = Color(0xFF403FEA);
   static const blackColor = Color(0xFF092a45);
   static const redColor = Color(0xFFAD8164);
+
+  static const secondaryColorDark = Colors.white;
 }

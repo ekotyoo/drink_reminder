@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../colors.dart';
-
 class CustomBottomNavigationBar extends StatefulWidget {
   const CustomBottomNavigationBar(
       {Key? key, this.onTap, required this.currentIndex})
@@ -18,7 +16,6 @@ class CustomBottomNavigationBar extends StatefulWidget {
 
 class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar>
     with SingleTickerProviderStateMixin {
-  late ColorTween _colorTween;
   late AnimationController _animationController;
   double indicatorPosition = 38.2;
 
@@ -27,14 +24,13 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar>
     super.initState();
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 500));
-    _colorTween = ColorTween(begin: MyColor.blackColor, end: Colors.white);
     _animationController.forward();
   }
 
   @override
   void dispose() {
-    super.dispose();
     _animationController.dispose();
+    super.dispose();
   }
 
   void moveBottomNavigationIndicator(int index) {
@@ -72,7 +68,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar>
               width: 80,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
-                color: MyColor.blackColor,
+                color: Theme.of(context).colorScheme.secondary,
               ),
             ),
           ),
@@ -92,7 +88,10 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar>
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: AnimatedBuilder(
-                    animation: _colorTween.animate(_animationController),
+                    animation: ColorTween(
+                            begin: Theme.of(context).colorScheme.secondary,
+                            end: Theme.of(context).scaffoldBackgroundColor)
+                        .animate(_animationController),
                     builder: (context, child) {
                       return Container(
                         height: 24,
@@ -101,8 +100,14 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar>
                         child: SvgPicture.asset(
                           'assets/icons/humidity.svg',
                           color: widget.currentIndex == 0
-                              ? _colorTween.evaluate(_animationController)
-                              : MyColor.blackColor,
+                              ? ColorTween(
+                                      begin: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                      end: Theme.of(context)
+                                          .scaffoldBackgroundColor)
+                                  .evaluate(_animationController)
+                              : Theme.of(context).colorScheme.secondary,
                         ),
                       );
                     },
@@ -122,7 +127,10 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar>
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: AnimatedBuilder(
-                      animation: _colorTween.animate(_animationController),
+                      animation: ColorTween(
+                              begin: Theme.of(context).colorScheme.secondary,
+                              end: Theme.of(context).scaffoldBackgroundColor)
+                          .animate(_animationController),
                       builder: (context, child) {
                         return Container(
                           height: 24,
@@ -131,8 +139,14 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar>
                           child: SvgPicture.asset(
                             'assets/icons/progress.svg',
                             color: widget.currentIndex == 1
-                                ? _colorTween.evaluate(_animationController)
-                                : MyColor.blackColor,
+                                ? ColorTween(
+                                        begin: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                        end: Theme.of(context)
+                                            .scaffoldBackgroundColor)
+                                    .evaluate(_animationController)
+                                : Theme.of(context).colorScheme.secondary,
                           ),
                         );
                       }),
@@ -151,7 +165,10 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar>
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: AnimatedBuilder(
-                      animation: _colorTween.animate(_animationController),
+                      animation: ColorTween(
+                              begin: Theme.of(context).colorScheme.secondary,
+                              end: Theme.of(context).scaffoldBackgroundColor)
+                          .animate(_animationController),
                       builder: (context, child) {
                         return Container(
                           height: 24,
@@ -160,8 +177,14 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar>
                           child: SvgPicture.asset(
                             'assets/icons/menu.svg',
                             color: widget.currentIndex == 2
-                                ? _colorTween.evaluate(_animationController)
-                                : MyColor.blackColor,
+                                ? ColorTween(
+                                        begin: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                        end: Theme.of(context)
+                                            .scaffoldBackgroundColor)
+                                    .evaluate(_animationController)
+                                : Theme.of(context).colorScheme.secondary,
                           ),
                         );
                       }),

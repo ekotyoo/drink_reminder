@@ -1,5 +1,3 @@
-import 'package:drink_reminder/common/colors.dart';
-import 'package:drink_reminder/common/styles.dart';
 import 'package:drink_reminder/common/widgets/custom_bottom_navigation_bar.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/pages/current_hidration_page.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/pages/drink_page.dart';
@@ -32,8 +30,8 @@ class _LandingPageState extends State<LandingPage>
 
   @override
   void dispose() {
-    super.dispose();
     _pageController.dispose();
+    super.dispose();
   }
 
   void animateToPage(int index) {
@@ -54,12 +52,13 @@ class _LandingPageState extends State<LandingPage>
                   _selectedPage = value;
                 });
               },
+              physics: const BouncingScrollPhysics(),
               controller: _pageController,
               children: [
                 const DrinkPage(),
                 const CurrentHidrationPage(),
                 Container(
-                  color: Colors.white,
+                  color: Theme.of(context).backgroundColor,
                 ),
               ],
             ),
@@ -86,20 +85,28 @@ class _LandingPageState extends State<LandingPage>
                                 parent: _animationController,
                                 curve: Curves.ease)),
                         child: Container(
-                          color: MyColor.secodaryColor,
+                          color: Theme.of(context).primaryColor,
                           child: Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 SvgPicture.asset(
                                   'assets/icons/humidity.svg',
-                                  color: MyColor.blackColor,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
                                   height: 100,
                                 ),
                                 const SizedBox(height: 16),
                                 Text(
                                   "You've reach\nyour goal!",
-                                  style: MyStyles.heading,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline4!
+                                      .copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary),
                                   textAlign: TextAlign.center,
                                 ),
                                 const SizedBox(height: 16),
@@ -115,11 +122,17 @@ class _LandingPageState extends State<LandingPage>
                                     padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(30),
-                                      color: MyColor.blackColor,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
                                     ),
-                                    child: const Center(
-                                      child: Icon(Icons.check_rounded,
-                                          size: 30, color: Colors.white),
+                                    child: Center(
+                                      child: Icon(
+                                        Icons.check_rounded,
+                                        size: 30,
+                                        color: Theme.of(context)
+                                            .scaffoldBackgroundColor,
+                                      ),
                                     ),
                                   ),
                                 ),
