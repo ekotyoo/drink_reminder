@@ -46,7 +46,7 @@ class _CurrentHidrationPageState extends State<CurrentHidrationPage>
           body: Column(
             children: [
               const SizedBox(height: 40),
-              const Align(
+              Align(
                 alignment: Alignment.center,
                 child: Text(
                   "Current Hydration",

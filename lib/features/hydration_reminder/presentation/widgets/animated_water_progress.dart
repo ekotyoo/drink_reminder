@@ -53,14 +53,8 @@ class WaterRemainingValue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text(
-      "-600 ml",
-      style: TextStyle(
-          fontSize: 12,
-          fontFamily: "OpenSans",
-          fontWeight: FontWeight.w400,
-          color: Colors.grey),
-    );
+    return Text("-600 ml",
+        style: MyStyles.body.copyWith(color: Colors.grey.withOpacity(0.8)));
   }
 }
 
@@ -71,13 +65,9 @@ class WaterDrinkValue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text(
+    return Text(
       "1290 ml",
-      style: TextStyle(
-          fontSize: 16,
-          fontFamily: "OpenSans",
-          fontWeight: FontWeight.w500,
-          color: MyColor.blackColor),
+      style: MyStyles.subHeading,
     );
   }
 }

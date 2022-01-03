@@ -97,7 +97,7 @@ class _LandingPageState extends State<LandingPage>
                                   height: 100,
                                 ),
                                 const SizedBox(height: 16),
-                                const Text(
+                                Text(
                                   "You've reach\nyour goal!",
                                   style: MyStyles.heading,
                                   textAlign: TextAlign.center,
