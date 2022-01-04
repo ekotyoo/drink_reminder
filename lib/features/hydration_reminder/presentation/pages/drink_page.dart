@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_model.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/widgets/wave.dart';
 import 'package:flutter/material.dart';
@@ -66,22 +68,98 @@ class _DrinkPageState extends State<DrinkPage>
                 opacity: _animation,
                 child: SlideTransition(
                   position: _offsetAnimation,
-                  child: GestureDetector(
-                    onTap: () {
-                      if (_animationController.isCompleted) {
-                        provider.updateDrink(200);
-                      }
-                    },
-                    child: Container(
-                      height: 80,
-                      width: 80,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color:
-                              Theme.of(context).primaryColor.withOpacity(0.5)),
-                      child: const Icon(
-                        Icons.add_rounded,
-                        size: 36,
+                  child: Consumer<DrinkModel>(
+                    builder: (context, value, child) => InkWell(
+                      onTap: () {
+                        if (!provider.isAddButtonLongPressed) {
+                          provider.updateDrink(200);
+                        } else {
+                          provider.toggleIsAddButtonLongPressed();
+                        }
+                      },
+                      onLongPress: () {
+                        provider.toggleIsAddButtonLongPressed();
+                      },
+                      customBorder: const CircleBorder(),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeOutQuad,
+                        height: value.isAddButtonLongPressed ? 220 : 80,
+                        width: value.isAddButtonLongPressed ? 220 : 80,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Theme.of(context)
+                                .primaryColor
+                                .withOpacity(0.5)),
+                        child: LayoutBuilder(
+                          builder: (context, constraints) => AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            switchInCurve: Curves.ease,
+                            transitionBuilder: (child, animation) {
+                              return RotationTransition(
+                                turns: animation.drive(Tween(begin: 0, end: 1)),
+                                alignment: Alignment.center,
+                                child: FadeTransition(
+                                    opacity: animation, child: child),
+                              );
+                            },
+                            child: value.isAddButtonLongPressed
+                                ? Stack(
+                                    children: [
+                                      Positioned(
+                                        top: 0 + 20,
+                                        left: 0,
+                                        right: 0,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            print("Undo");
+                                            provider
+                                                .toggleIsAddButtonLongPressed();
+                                          },
+                                          child: Column(
+                                            children: const [
+                                              Icon(Icons.undo),
+                                              Text("Undo")
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        bottom: 0 + 20,
+                                        left: 0,
+                                        right: 0,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            print("Reset");
+                                            provider
+                                                .toggleIsAddButtonLongPressed();
+                                          },
+                                          child: Column(
+                                            children: const [
+                                              Icon(Icons.restore),
+                                              Text("Reset")
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      const Align(
+                                        alignment: Alignment.center,
+                                        child: Icon(
+                                          Icons.close_rounded,
+                                          size: 36,
+                                          key: ValueKey("close_icon"),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : const Icon(
+                                    Icons.add_rounded,
+                                    size: 36,
+                                    key: ValueKey("add_icon"),
+                                  ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
