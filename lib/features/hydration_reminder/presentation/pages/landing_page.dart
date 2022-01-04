@@ -42,113 +42,107 @@ class _LandingPageState extends State<LandingPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ChangeNotifierProvider<DrinkModel>(
-        create: (context) => DrinkModel(),
-        child: Stack(
-          children: [
-            PageView(
-              onPageChanged: (value) {
-                setState(() {
-                  _selectedPage = value;
-                });
-              },
-              physics: const BouncingScrollPhysics(),
-              controller: _pageController,
-              children: [
-                const DrinkPage(),
-                const CurrentHidrationPage(),
-                Container(
-                  color: Theme.of(context).backgroundColor,
-                ),
-              ],
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: CustomBottomNavigationBar(
-                onTap: (index) => animateToPage(index),
-                currentIndex: _selectedPage,
+      body: Stack(
+        children: [
+          PageView(
+            onPageChanged: (value) {
+              setState(() {
+                _selectedPage = value;
+              });
+            },
+            physics: const BouncingScrollPhysics(),
+            controller: _pageController,
+            children: [
+              const DrinkPage(),
+              const CurrentHidrationPage(),
+              Container(
+                color: Theme.of(context).backgroundColor,
               ),
+            ],
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: CustomBottomNavigationBar(
+              onTap: (index) => animateToPage(index),
+              currentIndex: _selectedPage,
             ),
-            Consumer<DrinkModel>(
-              builder: (context, provider, child) {
-                if (provider.isCompleted) {
-                  _animationController.forward();
-                  return TweenAnimationBuilder(
-                    duration: const Duration(milliseconds: 500),
-                    tween: Tween<double>(begin: 0, end: 1),
-                    builder: (context, value, child) => FadeTransition(
-                      opacity: _animationController,
-                      child: SlideTransition(
-                        position: Tween<Offset>(
-                                begin: const Offset(0, 0.5), end: Offset.zero)
-                            .animate(CurvedAnimation(
-                                parent: _animationController,
-                                curve: Curves.ease)),
-                        child: Container(
-                          color: Theme.of(context).primaryColor,
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/icons/humidity.svg',
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
-                                  height: 100,
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  "You've reach\nyour goal!",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline4!
-                                      .copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .secondary),
-                                  textAlign: TextAlign.center,
-                                ),
-                                const SizedBox(height: 16),
-                                GestureDetector(
-                                  onTap: () {
-                                    _animationController.reverse().then(
-                                        (value) =>
-                                            provider.toggleIsCompleted());
-                                  },
-                                  child: Container(
-                                    height: 60,
-                                    width: 80,
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(30),
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary,
-                                    ),
-                                    child: Center(
-                                      child: Icon(
-                                        Icons.check_rounded,
-                                        size: 30,
+          ),
+          Consumer<DrinkModel>(
+            builder: (context, provider, child) {
+              if (provider.isCompleted) {
+                _animationController.forward();
+                return TweenAnimationBuilder(
+                  duration: const Duration(milliseconds: 500),
+                  tween: Tween<double>(begin: 0, end: 1),
+                  builder: (context, value, child) => FadeTransition(
+                    opacity: _animationController,
+                    child: SlideTransition(
+                      position: Tween<Offset>(
+                              begin: const Offset(0, 0.5), end: Offset.zero)
+                          .animate(CurvedAnimation(
+                              parent: _animationController,
+                              curve: Curves.ease)),
+                      child: Container(
+                        color: Theme.of(context).primaryColor,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                'assets/icons/humidity.svg',
+                                color: Theme.of(context).colorScheme.secondary,
+                                height: 100,
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                "You've reach\nyour goal!",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline4!
+                                    .copyWith(
+                                        fontWeight: FontWeight.bold,
                                         color: Theme.of(context)
-                                            .scaffoldBackgroundColor,
-                                      ),
+                                            .colorScheme
+                                            .secondary),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 16),
+                              GestureDetector(
+                                onTap: () {
+                                  _animationController.reverse().then(
+                                      (value) => provider.toggleIsCompleted());
+                                },
+                                child: Container(
+                                  height: 60,
+                                  width: 80,
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.check_rounded,
+                                      size: 30,
+                                      color: Theme.of(context)
+                                          .scaffoldBackgroundColor,
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
-                  );
-                }
-                return const SizedBox();
-              },
-            ),
-          ],
-        ),
+                  ),
+                );
+              }
+              return const SizedBox();
+            },
+          ),
+        ],
       ),
     );
   }

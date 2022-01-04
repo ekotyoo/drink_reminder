@@ -2,7 +2,7 @@ import 'package:drink_reminder/common/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class MyTheme {
+class MyTheme with ChangeNotifier {
   static ThemeData light() {
     return ThemeData(
       brightness: Brightness.light,
@@ -30,5 +30,13 @@ class MyTheme {
       ),
       textTheme: GoogleFonts.nunitoTextTheme(ThemeData.dark().textTheme),
     );
+  }
+
+  bool _isDarkTheme = false;
+  bool get isDarkTheme => _isDarkTheme;
+
+  void setTheme(bool value) {
+    _isDarkTheme = value;
+    notifyListeners();
   }
 }

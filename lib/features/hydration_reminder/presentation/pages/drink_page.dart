@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:drink_reminder/common/theme.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_model.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/widgets/wave.dart';
 import 'package:flutter/material.dart';
@@ -45,6 +46,14 @@ class _DrinkPageState extends State<DrinkPage>
       body: SafeArea(
         child: Stack(
           children: [
+            Consumer<MyTheme>(
+              builder: (context, provider, child) => Switch(
+                value: provider.isDarkTheme ? true : false,
+                onChanged: (value) {
+                  provider.setTheme(value);
+                },
+              ),
+            ),
             Align(
               alignment: Alignment.bottomCenter,
               child: FadeTransition(
