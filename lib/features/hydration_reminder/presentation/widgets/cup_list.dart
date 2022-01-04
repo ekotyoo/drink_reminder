@@ -1,5 +1,8 @@
 import 'package:drink_reminder/features/hydration_reminder/domain/entities/cup.dart';
+import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:provider/src/provider.dart';
 
 class CupList extends AnimatedWidget {
   const CupList({Key? key, required this.animation})
@@ -50,28 +53,38 @@ class CupItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {},
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        height: 70,
-        width: 160,
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            Icon(cup.image,
-                color: Theme.of(context).colorScheme.secondary, size: 24),
-            const SizedBox(width: 8),
-            Text("${cup.capacity} ml",
-                style: Theme.of(context)
-                    .textTheme
-                    .subtitle1!
-                    .copyWith(fontWeight: FontWeight.bold)),
-          ],
-        ),
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: () {
+        context.read<DrinkModel>().setSelectedCup(cup);
+      },
+      child: Consumer<DrinkModel>(
+        builder: (context, value, child) {
+          return AnimatedContainer(
+            duration: const Duration(milliseconds: 500),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            height: 70,
+            width: 160,
+            decoration: BoxDecoration(
+              color: context.read<DrinkModel>().selectedCup.id == cup.id
+                  ? Theme.of(context).primaryColor
+                  : Theme.of(context).primaryColor.withOpacity(0.4),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Icon(cup.image,
+                    color: Theme.of(context).colorScheme.secondary, size: 24),
+                const SizedBox(width: 8),
+                Text("${cup.capacity} ml",
+                    style: Theme.of(context)
+                        .textTheme
+                        .subtitle1!
+                        .copyWith(fontWeight: FontWeight.bold)),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

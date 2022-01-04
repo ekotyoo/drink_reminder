@@ -1,23 +1,55 @@
 import 'dart:math';
 import 'dart:ui' as ui;
 
+import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/src/provider.dart';
 
-class AnimatedWaterProgress extends AnimatedWidget {
-  const AnimatedWaterProgress({Key? key, required this.animation})
-      : super(key: key, listenable: animation);
+class AnimatedWaterProgress extends StatefulWidget {
+  const AnimatedWaterProgress({Key? key}) : super(key: key);
 
-  final Animation<double> animation;
+  @override
+  State<AnimatedWaterProgress> createState() => _AnimatedWaterProgressState();
+}
+
+class _AnimatedWaterProgressState extends State<AnimatedWaterProgress>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+  late DrinkModel _provider;
+
+  @override
+  void initState() {
+    _provider = context.read<DrinkModel>();
+    _animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 500));
+    _animation = Tween<double>(begin: 0, end: 1).animate(
+        CurvedAnimation(parent: _animationController, curve: Curves.ease));
+    _animationController.forward();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: WaterProgressPainter(
-          percentage: animation.value, color: Theme.of(context).primaryColor),
-      child: WaterProgress(
-        percentage: animation.value,
-      ),
-    );
+    final _percentage = _provider.currentDrink / _provider.drinkTarget;
+    return AnimatedBuilder(
+        animation: _animation,
+        builder: (context, child) {
+          return CustomPaint(
+            painter: WaterProgressPainter(
+                percentage: _animation.value * _percentage,
+                color: Theme.of(context).primaryColor),
+            child: WaterProgress(
+              percentage: _animation.value * _percentage,
+            ),
+          );
+        });
   }
 }
 
@@ -28,6 +60,7 @@ class WaterProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _provider = context.read<DrinkModel>();
     return SizedBox(
       height: 240,
       width: 240,
@@ -36,8 +69,12 @@ class WaterProgress extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             PercentageValue(percentage: percentage),
-            const WaterDrinkValue(),
-            const WaterRemainingValue(),
+            WaterDrinkValue(
+              value: _provider.drinkTarget.toInt(),
+            ),
+            WaterRemainingValue(
+              value: (_provider.drinkTarget - _provider.currentDrink).toInt(),
+            ),
           ],
         ),
       ),
@@ -46,13 +83,13 @@ class WaterProgress extends StatelessWidget {
 }
 
 class WaterRemainingValue extends StatelessWidget {
-  const WaterRemainingValue({
-    Key? key,
-  }) : super(key: key);
+  const WaterRemainingValue({Key? key, this.value = 0}) : super(key: key);
+
+  final int value;
 
   @override
   Widget build(BuildContext context) {
-    return Text("-600 ml",
+    return Text("-$value ml",
         style: Theme.of(context).textTheme.bodyText1!.copyWith(
             fontWeight: FontWeight.w600,
             color: Theme.of(context).primaryColor));
@@ -60,13 +97,13 @@ class WaterRemainingValue extends StatelessWidget {
 }
 
 class WaterDrinkValue extends StatelessWidget {
-  const WaterDrinkValue({
-    Key? key,
-  }) : super(key: key);
+  const WaterDrinkValue({Key? key, this.value = 0}) : super(key: key);
+
+  final int value;
 
   @override
   Widget build(BuildContext context) {
-    return Text("1290 ml",
+    return Text("$value ml",
         style: Theme.of(context).textTheme.subtitle1!.copyWith(
               fontWeight: FontWeight.w600,
             ));

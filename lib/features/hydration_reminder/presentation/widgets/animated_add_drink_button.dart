@@ -12,8 +12,11 @@ class AnimatedAddDrinkButton extends StatefulWidget {
 }
 
 class _AnimatedAddDrinkButtonState extends State<AnimatedAddDrinkButton>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _animationController;
+  late AnimationController _animationController2;
+  late Animation<double> _addDrinkAnimation;
+  late Animation<double> _addDrinkAnimationOpacity;
   late Animation<double> _animation;
   late Animation<double> _opacityAnimation;
 
@@ -21,8 +24,28 @@ class _AnimatedAddDrinkButtonState extends State<AnimatedAddDrinkButton>
   void initState() {
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 500));
+    _animationController2 = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1000));
+    _addDrinkAnimationOpacity = TweenSequence<double>([
+      TweenSequenceItem(
+          tween: Tween<double>(
+            begin: 0,
+            end: 1,
+          ),
+          weight: 50),
+      TweenSequenceItem(
+          tween: Tween<double>(
+            begin: 1,
+            end: 0,
+          ),
+          weight: 50),
+    ]).animate(
+        CurvedAnimation(parent: _animationController2, curve: Curves.ease));
+
     _animation = Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(
         parent: _animationController, curve: Curves.easeInOutCubic));
+    _addDrinkAnimation = Tween<double>(begin: 0, end: 1).animate(
+        CurvedAnimation(parent: _animationController2, curve: Curves.ease));
     _opacityAnimation = Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(
         parent: _animationController,
         curve: const Interval(0.3, 1, curve: Curves.ease)));
@@ -41,7 +64,9 @@ class _AnimatedAddDrinkButtonState extends State<AnimatedAddDrinkButton>
       builder: (context, value, child) => InkWell(
         onTap: () {
           if (!value.isAddButtonExpanded) {
-            value.updateDrink(200);
+            value.updateDrink(value.selectedCup.capacity);
+            _animationController2.reset();
+            _animationController2.forward();
           } else {
             value.toggleIsAddButtonExpanded();
             _animationController.reverse();
@@ -180,6 +205,28 @@ class _AnimatedAddDrinkButtonState extends State<AnimatedAddDrinkButton>
                           ],
                         ),
                       ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: AnimatedBuilder(
+                      animation: _addDrinkAnimation,
+                      builder: (context, child) => Transform(
+                          transform: Matrix4.identity()
+                            ..translate(0.0, _addDrinkAnimation.value * -100.0),
+                          child: Opacity(
+                            opacity: _addDrinkAnimationOpacity.value,
+                            child: child,
+                          )),
+                      child: Text(
+                          "+${context.read<DrinkModel>().selectedCup.capacity} ml",
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline5!
+                              .copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary)),
                     ),
                   ),
                 ],

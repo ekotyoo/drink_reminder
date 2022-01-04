@@ -54,12 +54,9 @@ class _CurrentHidrationPageState extends State<CurrentHidrationPage>
               textAlign: TextAlign.center,
             ),
           ),
-          // const SizedBox(height: 100),
-          Expanded(
+          const Expanded(
             flex: 2,
-            child: AnimatedWaterProgress(
-              animation: _progressAnimation,
-            ),
+            child: AnimatedWaterProgress(),
           ),
           Expanded(
               flex: 1,
