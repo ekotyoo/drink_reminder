@@ -122,7 +122,7 @@ class _DrinkPageState extends State<DrinkPage>
                                         right: 0,
                                         child: GestureDetector(
                                           onTap: () {
-                                            print("Undo");
+                                            provider.undo();
                                             provider
                                                 .toggleIsAddButtonLongPressed();
                                           },
@@ -140,7 +140,7 @@ class _DrinkPageState extends State<DrinkPage>
                                         right: 0,
                                         child: GestureDetector(
                                           onTap: () {
-                                            print("Reset");
+                                            provider.reset();
                                             provider
                                                 .toggleIsAddButtonLongPressed();
                                           },

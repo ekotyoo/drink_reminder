@@ -27,6 +27,16 @@ class DrinkModel extends ChangeNotifier {
     }
   }
 
+  void reset() {
+    _currentDrink = 0;
+    notifyListeners();
+  }
+
+  void undo() {
+    if (_currentDrink - 200 >= 0) _currentDrink -= 200;
+    notifyListeners();
+  }
+
   bool _isAddButtonLongPressed = false;
   bool get isAddButtonLongPressed => _isAddButtonLongPressed;
   void toggleIsAddButtonLongPressed() {
