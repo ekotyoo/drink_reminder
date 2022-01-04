@@ -37,10 +37,10 @@ class DrinkModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool _isAddButtonLongPressed = false;
-  bool get isAddButtonLongPressed => _isAddButtonLongPressed;
-  void toggleIsAddButtonLongPressed() {
-    _isAddButtonLongPressed = !_isAddButtonLongPressed;
+  bool _isAddButtonExpanded = false;
+  bool get isAddButtonExpanded => _isAddButtonExpanded;
+  void toggleIsAddButtonExpanded() {
+    _isAddButtonExpanded = !_isAddButtonExpanded;
     notifyListeners();
   }
 }

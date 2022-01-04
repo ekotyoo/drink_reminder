@@ -66,7 +66,7 @@ class _CurrentHidrationPageState extends State<CurrentHidrationPage>
               child: CupList(
                 animation: _animationController,
               )),
-          const SizedBox(height: 100),
+          const Spacer(),
         ],
       )),
     );
