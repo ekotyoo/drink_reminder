@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../colors.dart';
-
 class CustomBottomNavigationBar extends StatefulWidget {
   const CustomBottomNavigationBar(
       {Key? key, this.onTap, required this.currentIndex})
@@ -18,7 +16,6 @@ class CustomBottomNavigationBar extends StatefulWidget {
 
 class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar>
     with SingleTickerProviderStateMixin {
-  late ColorTween _colorTween;
   late AnimationController _animationController;
   double indicatorPosition = 38.2;
 
@@ -27,14 +24,13 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar>
     super.initState();
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 500));
-    _colorTween = ColorTween(begin: MyColor.blackColor, end: Colors.white);
     _animationController.forward();
   }
 
   @override
   void dispose() {
-    super.dispose();
     _animationController.dispose();
+    super.dispose();
   }
 
   void moveBottomNavigationIndicator(int index) {
@@ -72,105 +68,116 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar>
               width: 80,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
-                color: MyColor.blackColor,
+                color: Theme.of(context).colorScheme.secondary,
               ),
             ),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              InkWell(
-                onTap: () {
-                  widget.onTap?.call(0);
-                  moveBottomNavigationIndicator(0);
-                },
-                child: Container(
-                  height: 60,
-                  width: 80,
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: AnimatedBuilder(
-                    animation: _colorTween.animate(_animationController),
-                    builder: (context, child) {
-                      return Container(
-                        height: 24,
-                        width: 24,
-                        padding: const EdgeInsets.all(6),
-                        child: SvgPicture.asset(
-                          'assets/icons/humidity.svg',
-                          color: widget.currentIndex == 0
-                              ? _colorTween.evaluate(_animationController)
-                              : MyColor.blackColor,
-                        ),
-                      );
+            children: _bottomNavigationIcons
+                .asMap()
+                .entries
+                .map(
+                  (element) => CustomBottomNavigationBarItem(
+                    iconPath: element.value,
+                    onTap: (value) {
+                      widget.onTap?.call(value);
+                      moveBottomNavigationIndicator(value);
                     },
+                    isSelected: widget.currentIndex == element.key,
+                    index: element.key,
                   ),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  widget.onTap?.call(1);
-                  moveBottomNavigationIndicator(1);
-                },
-                child: Container(
-                  height: 60,
-                  width: 80,
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: AnimatedBuilder(
-                      animation: _colorTween.animate(_animationController),
-                      builder: (context, child) {
-                        return Container(
-                          height: 24,
-                          width: 24,
-                          padding: const EdgeInsets.all(6),
-                          child: SvgPicture.asset(
-                            'assets/icons/progress.svg',
-                            color: widget.currentIndex == 1
-                                ? _colorTween.evaluate(_animationController)
-                                : MyColor.blackColor,
-                          ),
-                        );
-                      }),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  widget.onTap?.call(2);
-                  moveBottomNavigationIndicator(2);
-                },
-                child: Container(
-                  height: 60,
-                  width: 80,
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: AnimatedBuilder(
-                      animation: _colorTween.animate(_animationController),
-                      builder: (context, child) {
-                        return Container(
-                          height: 24,
-                          width: 24,
-                          padding: const EdgeInsets.all(8),
-                          child: SvgPicture.asset(
-                            'assets/icons/menu.svg',
-                            color: widget.currentIndex == 2
-                                ? _colorTween.evaluate(_animationController)
-                                : MyColor.blackColor,
-                          ),
-                        );
-                      }),
-                ),
-              ),
-            ],
+                )
+                .toList(),
           ),
         ],
       ),
     );
   }
 }
+
+class CustomBottomNavigationBarItem extends StatefulWidget {
+  const CustomBottomNavigationBarItem({
+    Key? key,
+    this.isSelected = false,
+    required this.iconPath,
+    this.onTap,
+    required this.index,
+  }) : super(key: key);
+
+  final bool isSelected;
+  final String iconPath;
+  final ValueChanged<int>? onTap;
+  final int index;
+
+  @override
+  State<CustomBottomNavigationBarItem> createState() =>
+      _CustomBottomNavigationBarItemState();
+}
+
+class _CustomBottomNavigationBarItemState
+    extends State<CustomBottomNavigationBarItem>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+
+  @override
+  void initState() {
+    _animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 500));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.isSelected) {
+      _animationController.forward(from: 0);
+    } else {
+      _animationController.reverse(from: 1);
+    }
+    return InkWell(
+      onTap: () {
+        widget.onTap?.call(widget.index);
+      },
+      child: Container(
+        height: 60,
+        width: 80,
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: AnimatedBuilder(
+            animation: ColorTween(
+                    begin: Theme.of(context).colorScheme.secondary,
+                    end: Theme.of(context).scaffoldBackgroundColor)
+                .animate(_animationController),
+            builder: (context, child) {
+              return Container(
+                  height: 24,
+                  width: 24,
+                  padding: const EdgeInsets.all(8),
+                  child: SvgPicture.asset(
+                    widget.iconPath,
+                    color: widget.isSelected
+                        ? ColorTween(
+                            begin: Theme.of(context).colorScheme.secondary,
+                            end: Theme.of(context).scaffoldBackgroundColor,
+                          ).evaluate(_animationController)
+                        : Theme.of(context).colorScheme.secondary,
+                  ));
+            }),
+      ),
+    );
+  }
+}
+
+const List<String> _bottomNavigationIcons = [
+  'assets/icons/humidity.svg',
+  'assets/icons/progress.svg',
+  'assets/icons/menu.svg'
+];

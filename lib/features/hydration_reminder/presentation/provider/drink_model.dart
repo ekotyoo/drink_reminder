@@ -1,3 +1,4 @@
+import 'package:drink_reminder/features/hydration_reminder/domain/entities/cup.dart';
 import 'package:flutter/widgets.dart';
 
 class DrinkModel extends ChangeNotifier {
@@ -16,6 +17,13 @@ class DrinkModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Cup _selectedCup = cups[0];
+  Cup get selectedCup => _selectedCup;
+  void setSelectedCup(Cup newCup) {
+    _selectedCup = newCup;
+    notifyListeners();
+  }
+
   int _currentDrink = 599;
   int get currentDrink => _currentDrink;
   void updateDrink(int value) {
@@ -25,5 +33,24 @@ class DrinkModel extends ChangeNotifier {
     } else {
       toggleIsCompleted();
     }
+  }
+
+  void reset() {
+    _currentDrink = 0;
+    notifyListeners();
+  }
+
+  void undo() {
+    if (_currentDrink - _selectedCup.capacity >= 0) {
+      _currentDrink -= _selectedCup.capacity;
+    }
+    notifyListeners();
+  }
+
+  bool _isAddButtonExpanded = false;
+  bool get isAddButtonExpanded => _isAddButtonExpanded;
+  void toggleIsAddButtonExpanded() {
+    _isAddButtonExpanded = !_isAddButtonExpanded;
+    notifyListeners();
   }
 }
