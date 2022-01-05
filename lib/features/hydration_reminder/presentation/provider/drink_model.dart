@@ -41,7 +41,9 @@ class DrinkModel extends ChangeNotifier {
   }
 
   void undo() {
-    if (_currentDrink - 200 >= 0) _currentDrink -= 200;
+    if (_currentDrink - _selectedCup.capacity >= 0) {
+      _currentDrink -= _selectedCup.capacity;
+    }
     notifyListeners();
   }
 

@@ -49,9 +49,9 @@ class _WaveState extends State<Wave> with TickerProviderStateMixin {
   }
 
   void startAnimation() {
-    Future.delayed(const Duration(milliseconds: 300)).then((value) {
-      _animationController1.repeat();
-      _animationController2.repeat();
+    Future.delayed(const Duration(milliseconds: 500)).whenComplete(() {
+      _animationController1.forward();
+      _animationController2.forward();
       _animationController3.forward();
     });
   }
@@ -126,7 +126,7 @@ class _WaveState extends State<Wave> with TickerProviderStateMixin {
                     ),
                     Text(
                       "${(_animationController3.value * _percentage * 100).toInt()}%",
-                      style: Theme.of(context).textTheme.headline4!.copyWith(
+                      style: Theme.of(context).textTheme.headline5!.copyWith(
                           fontWeight: FontWeight.bold,
                           color: Theme.of(context).colorScheme.secondary),
                     ),

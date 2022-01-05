@@ -3,7 +3,7 @@ import 'dart:ui' as ui;
 
 import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_model.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/src/provider.dart';
+import 'package:provider/provider.dart';
 
 class AnimatedWaterProgress extends StatefulWidget {
   const AnimatedWaterProgress({Key? key}) : super(key: key);
@@ -22,10 +22,10 @@ class _AnimatedWaterProgressState extends State<AnimatedWaterProgress>
   void initState() {
     _provider = context.read<DrinkModel>();
     _animationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 500));
+        vsync: this, duration: const Duration(milliseconds: 1000));
     _animation = Tween<double>(begin: 0, end: 1).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.ease));
-    _animationController.forward();
+    startAnimation();
     super.initState();
   }
 
@@ -33,6 +33,11 @@ class _AnimatedWaterProgressState extends State<AnimatedWaterProgress>
   void dispose() {
     _animationController.dispose();
     super.dispose();
+  }
+
+  void startAnimation() {
+    Future.delayed(const Duration(milliseconds: 300))
+        .whenComplete(() => _animationController.forward());
   }
 
   @override

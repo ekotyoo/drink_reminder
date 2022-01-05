@@ -1,6 +1,7 @@
 import 'package:drink_reminder/common/widgets/custom_bottom_navigation_bar.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/pages/current_hidration_page.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/pages/drink_page.dart';
+import 'package:drink_reminder/features/hydration_reminder/presentation/pages/hydration_history_page.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -52,12 +53,10 @@ class _LandingPageState extends State<LandingPage>
             },
             physics: const BouncingScrollPhysics(),
             controller: _pageController,
-            children: [
-              const DrinkPage(),
-              const CurrentHidrationPage(),
-              Container(
-                color: Theme.of(context).backgroundColor,
-              ),
+            children: const [
+              DrinkPage(),
+              CurrentHidrationPage(),
+              HydrationHistoryPage(),
             ],
           ),
           Align(

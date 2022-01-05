@@ -12,7 +12,6 @@ class CurrentHidrationPage extends StatefulWidget {
 class _CurrentHidrationPageState extends State<CurrentHidrationPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  late Animation<double> _progressAnimation;
 
   final double currentProgress = 0.8;
 
@@ -23,12 +22,12 @@ class _CurrentHidrationPageState extends State<CurrentHidrationPage>
       vsync: this,
       duration: const Duration(milliseconds: 1000),
     );
+    startAnimation();
+  }
 
-    _progressAnimation = Tween<double>(begin: 0, end: currentProgress).animate(
-        CurvedAnimation(parent: _animationController, curve: Curves.ease));
-
+  void startAnimation() {
     Future.delayed(const Duration(milliseconds: 300))
-        .then((value) => _animationController.forward());
+        .whenComplete(() => _animationController.forward());
   }
 
   @override

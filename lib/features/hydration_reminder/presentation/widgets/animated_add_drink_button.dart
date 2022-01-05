@@ -222,7 +222,7 @@ class _AnimatedAddDrinkButtonState extends State<AnimatedAddDrinkButton>
                           "+${context.read<DrinkModel>().selectedCup.capacity} ml",
                           style: Theme.of(context)
                               .textTheme
-                              .headline5!
+                              .headline6!
                               .copyWith(
                                   fontWeight: FontWeight.bold,
                                   color:
