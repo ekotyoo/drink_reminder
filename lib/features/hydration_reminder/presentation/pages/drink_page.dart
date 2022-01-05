@@ -43,6 +43,7 @@ class _DrinkPageState extends State<DrinkPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     _animationController.forward();
+
     return Scaffold(
       body: SafeArea(
         child: Stack(

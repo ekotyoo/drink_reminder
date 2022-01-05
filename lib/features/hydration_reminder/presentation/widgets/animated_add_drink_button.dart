@@ -62,7 +62,7 @@ class _AnimatedAddDrinkButtonState extends State<AnimatedAddDrinkButton>
   Widget build(BuildContext context) {
     return Consumer<DrinkModel>(
       builder: (context, value, child) => InkWell(
-        onTap: () {
+        onTap: () async {
           if (!value.isAddButtonExpanded) {
             value.updateDrink(value.selectedCup.capacity);
             _animationController2.reset();
@@ -71,6 +71,8 @@ class _AnimatedAddDrinkButtonState extends State<AnimatedAddDrinkButton>
             value.toggleIsAddButtonExpanded();
             _animationController.reverse();
           }
+          final test = await value.currentHydrations();
+          print(test);
         },
         onLongPress: () {
           if (!value.isAddButtonExpanded) {

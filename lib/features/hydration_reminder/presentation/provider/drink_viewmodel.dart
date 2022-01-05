@@ -1,5 +1,8 @@
 import 'package:drink_reminder/features/hydration_reminder/domain/entities/cup.dart';
+import 'package:drink_reminder/features/hydration_reminder/domain/entities/hydration.dart';
 import 'package:flutter/widgets.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 
 class DrinkModel extends ChangeNotifier {
   int _drinkTarget = 1290;
@@ -7,6 +10,31 @@ class DrinkModel extends ChangeNotifier {
   set drinkTarget(int target) {
     _drinkTarget = target;
     notifyListeners();
+  }
+
+  Future<void> insertHydration(Hydration hydration) async {
+    final db =
+        await openDatabase(join(await getDatabasesPath(), 'drink_database.db'));
+
+    await db.insert('hydrations', hydration.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<List<Hydration>> currentHydrations() async {
+    final db =
+        await openDatabase(join(await getDatabasesPath(), 'drink_database.db'));
+
+    final List<Map<String, dynamic>> maps = await db.query('hydrations');
+
+    return List.generate(
+      maps.length,
+      (index) => Hydration(
+        id: maps[index]['id'],
+        value: maps[index]['value'],
+        createdAt: DateTime.fromMillisecondsSinceEpoch(
+            maps[index]['millisSinceEpoch']),
+      ),
+    );
   }
 
   bool _isCompleted = false;
@@ -24,11 +52,13 @@ class DrinkModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  int _currentDrink = 599;
+  int _currentDrink = 0;
   int get currentDrink => _currentDrink;
   void updateDrink(int value) {
     if (_currentDrink + value < _drinkTarget) {
       _currentDrink += value;
+      insertHydration(
+          Hydration(id: 1, value: value, createdAt: DateTime.now()));
       notifyListeners();
     } else {
       toggleIsCompleted();
