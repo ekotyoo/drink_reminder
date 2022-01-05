@@ -1,5 +1,5 @@
 import 'package:drink_reminder/common/theme.dart';
-import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_model.dart';
+import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_viewmodel.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/widgets/animated_add_drink_button.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/widgets/wave.dart';
 import 'package:flutter/material.dart';

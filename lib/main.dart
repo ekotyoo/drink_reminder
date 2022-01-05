@@ -3,7 +3,7 @@ import 'package:drink_reminder/features/hydration_reminder/presentation/pages/la
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'features/hydration_reminder/presentation/provider/drink_model.dart';
+import 'features/hydration_reminder/presentation/provider/drink_viewmodel.dart';
 
 void main() {
   runApp(const MyApp());

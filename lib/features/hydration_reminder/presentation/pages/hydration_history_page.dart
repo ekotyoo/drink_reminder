@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:drink_reminder/features/hydration_reminder/presentation/provider/hydration_history_model.dart';
+import 'package:drink_reminder/features/hydration_reminder/presentation/provider/hydration_history_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -80,6 +80,12 @@ class _DayModeGraphState extends State<DayModeGraph>
         CurvedAnimation(parent: _animationController, curve: Curves.ease));
     _animationController.forward();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   @override
