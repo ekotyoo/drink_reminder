@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_model.dart';
+import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -62,7 +62,7 @@ class _AnimatedAddDrinkButtonState extends State<AnimatedAddDrinkButton>
   Widget build(BuildContext context) {
     return Consumer<DrinkModel>(
       builder: (context, value, child) => InkWell(
-        onTap: () {
+        onTap: () async {
           if (!value.isAddButtonExpanded) {
             value.updateDrink(value.selectedCup.capacity);
             _animationController2.reset();

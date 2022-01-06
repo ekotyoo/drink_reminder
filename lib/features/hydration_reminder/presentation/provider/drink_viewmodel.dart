@@ -1,4 +1,6 @@
+import 'package:drink_reminder/common/db_helper.dart';
 import 'package:drink_reminder/features/hydration_reminder/domain/entities/cup.dart';
+import 'package:drink_reminder/features/hydration_reminder/domain/entities/hydration.dart';
 import 'package:flutter/widgets.dart';
 
 class DrinkModel extends ChangeNotifier {
@@ -24,11 +26,13 @@ class DrinkModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  int _currentDrink = 599;
+  int _currentDrink = 0;
   int get currentDrink => _currentDrink;
   void updateDrink(int value) {
     if (_currentDrink + value < _drinkTarget) {
       _currentDrink += value;
+      DatabaseHelper.instance.insertHydration(
+          Hydration(id: 1, value: value, createdAt: DateTime.now()));
       notifyListeners();
     } else {
       toggleIsCompleted();
