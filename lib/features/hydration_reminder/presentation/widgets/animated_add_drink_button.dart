@@ -71,8 +71,6 @@ class _AnimatedAddDrinkButtonState extends State<AnimatedAddDrinkButton>
             value.toggleIsAddButtonExpanded();
             _animationController.reverse();
           }
-          final test = await value.currentHydrations();
-          print(test);
         },
         onLongPress: () {
           if (!value.isAddButtonExpanded) {
