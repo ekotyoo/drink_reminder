@@ -31,6 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_svg: ^1.0.0
+  get_storage: ^2.0.3
   google_fonts: ^2.2.0
   path: ^1.8.0
   provider: ^6.0.2

@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:drink_reminder/features/hydration_reminder/presentation/provider/hydration_history_viewmodel.dart';
+import 'package:drink_reminder/features/hydration_history/presentation/providers/hydration_history_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -14,44 +14,47 @@ class HydrationHistoryPage extends StatefulWidget {
 
 class _HydrationHistoryPageState extends State<HydrationHistoryPage> {
   @override
+  void initState() {
+    Provider.of<HydrationHistoryViewModel>(context, listen: false).getHistory();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => HydrationHistoryModel(),
-      child: SafeArea(
-        child: Scaffold(
-          body: Column(
-            children: [
-              const SizedBox(height: 40),
-              Align(
-                alignment: Alignment.center,
-                child: Text(
-                  "History",
-                  style: Theme.of(context).textTheme.headline5!.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.secondary),
-                  textAlign: TextAlign.center,
+    return SafeArea(
+      child: Scaffold(
+        body: Column(
+          children: [
+            const SizedBox(height: 40),
+            Align(
+              alignment: Alignment.center,
+              child: Text(
+                "History",
+                style: Theme.of(context).textTheme.headline5!.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.secondary),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Consumer<HydrationHistoryViewModel>(
+                builder: (context, provider, child) => Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: HistoryMode.values
+                      .map((value) => HistoryModeItem(mode: value))
+                      .toList(),
                 ),
               ),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Consumer<HydrationHistoryModel>(
-                  builder: (context, provider, child) => Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: HistoryMode.values
-                        .map((value) => HistoryModeItem(mode: value))
-                        .toList(),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: DayModeGraph(),
-              ),
-              Expanded(child: Container())
-            ],
-          ),
+            ),
+            const SizedBox(height: 20),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: DayModeGraph(),
+            ),
+            Expanded(child: Container())
+          ],
         ),
       ),
     );
@@ -210,10 +213,10 @@ class HistoryModeItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        context.read<HydrationHistoryModel>().selectedMode = mode;
+        context.read<HydrationHistoryViewModel>().selectedMode = mode;
       },
       borderRadius: BorderRadius.circular(20),
-      child: Consumer<HydrationHistoryModel>(
+      child: Consumer<HydrationHistoryViewModel>(
         builder: (context, value, child) => AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           curve: Curves.ease,

@@ -42,7 +42,9 @@ class _AnimatedWaterProgressState extends State<AnimatedWaterProgress>
 
   @override
   Widget build(BuildContext context) {
-    final _percentage = _provider.currentDrink / _provider.drinkTarget;
+    final _percentage = _provider.isCompleted
+        ? 1
+        : _provider.currentDrink / _provider.drinkTarget;
     return AnimatedBuilder(
         animation: _animation,
         builder: (context, child) {
@@ -75,10 +77,12 @@ class WaterProgress extends StatelessWidget {
           children: [
             PercentageValue(percentage: percentage),
             WaterDrinkValue(
-              value: _provider.drinkTarget.toInt(),
-            ),
+                currentDrink: _provider.currentDrink,
+                drinkTarget: _provider.drinkTarget),
             WaterRemainingValue(
-              value: (_provider.drinkTarget - _provider.currentDrink).toInt(),
+              value: _provider.isCompleted
+                  ? 0
+                  : (_provider.drinkTarget - _provider.currentDrink).toInt(),
             ),
           ],
         ),
@@ -94,7 +98,7 @@ class WaterRemainingValue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text("-$value ml",
+    return Text(value == 0 ? "Goal Achieved!" : "-$value ml",
         style: Theme.of(context).textTheme.bodyText1!.copyWith(
             fontWeight: FontWeight.w600,
             color: Theme.of(context).primaryColor));
@@ -102,13 +106,16 @@ class WaterRemainingValue extends StatelessWidget {
 }
 
 class WaterDrinkValue extends StatelessWidget {
-  const WaterDrinkValue({Key? key, this.value = 0}) : super(key: key);
+  const WaterDrinkValue(
+      {Key? key, required this.currentDrink, required this.drinkTarget})
+      : super(key: key);
 
-  final int value;
+  final int currentDrink;
+  final int drinkTarget;
 
   @override
   Widget build(BuildContext context) {
-    return Text("$value ml",
+    return Text("$currentDrink / $drinkTarget ml",
         style: Theme.of(context).textTheme.subtitle1!.copyWith(
               fontWeight: FontWeight.w600,
             ));
