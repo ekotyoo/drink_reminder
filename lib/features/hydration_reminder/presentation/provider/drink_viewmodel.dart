@@ -30,23 +30,49 @@ class DrinkModel extends ChangeNotifier {
   int get currentDrink => _currentDrink;
   void updateDrink(int value) {
     if (_currentDrink + value < _drinkTarget) {
-      _currentDrink += value;
-      DatabaseHelper.instance.insertHydration(
-          Hydration(id: 1, value: value, createdAt: DateTime.now()));
-      notifyListeners();
+      try {
+        DatabaseHelper.instance
+            .insertHydration(Hydration(
+          id: 1,
+          value: value,
+          createdAt: DateTime.now(),
+        ))
+            .then((value) {
+          refresh();
+        });
+      } catch (e) {
+        print(e.toString());
+      }
     } else {
+      reset();
       toggleIsCompleted();
     }
   }
 
-  void reset() {
-    _currentDrink = 0;
+  void refresh() async {
+    final hydrations = await DatabaseHelper.instance.currentHydrations();
+    int _newValue = 0;
+    for (var element in hydrations) {
+      _newValue += element.value;
+    }
+    _currentDrink = _newValue;
     notifyListeners();
   }
 
-  void undo() {
+  void reset() {
+    DatabaseHelper.instance.reset().then((value) => _currentDrink = 0);
+    notifyListeners();
+  }
+
+  void undo() async {
     if (_currentDrink - _selectedCup.capacity >= 0) {
-      _currentDrink -= _selectedCup.capacity;
+      try {
+        await DatabaseHelper.instance
+            .deleteLastDrink()
+            .then((value) => refresh());
+      } catch (e) {
+        print(e.toString());
+      }
     }
     notifyListeners();
   }

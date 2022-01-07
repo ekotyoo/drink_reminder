@@ -21,6 +21,7 @@ class _DrinkPageState extends State<DrinkPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    Provider.of<DrinkModel>(context, listen: false).refresh();
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 1000));
     _addButtonAnimationController = AnimationController(
