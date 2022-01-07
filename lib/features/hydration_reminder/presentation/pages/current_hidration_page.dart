@@ -13,8 +13,6 @@ class _CurrentHidrationPageState extends State<CurrentHidrationPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
 
-  final double currentProgress = 0.8;
-
   @override
   void initState() {
     super.initState();

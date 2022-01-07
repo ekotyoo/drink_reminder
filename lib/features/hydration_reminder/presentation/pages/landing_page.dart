@@ -1,7 +1,7 @@
 import 'package:drink_reminder/common/widgets/custom_bottom_navigation_bar.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/pages/current_hidration_page.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/pages/drink_page.dart';
-import 'package:drink_reminder/features/hydration_reminder/presentation/pages/hydration_history_page.dart';
+import 'package:drink_reminder/features/hydration_history/presentation/pages/hydration_history_page.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -68,7 +68,7 @@ class _LandingPageState extends State<LandingPage>
           ),
           Consumer<DrinkModel>(
             builder: (context, provider, child) {
-              if (provider.isCompleted) {
+              if (provider.showSuccess) {
                 _animationController.forward();
                 return TweenAnimationBuilder(
                   duration: const Duration(milliseconds: 500),
@@ -109,7 +109,7 @@ class _LandingPageState extends State<LandingPage>
                               GestureDetector(
                                 onTap: () {
                                   _animationController.reverse().then(
-                                      (value) => provider.toggleIsCompleted());
+                                      (_) => provider.toggleShowSuccess(false));
                                 },
                                 child: Container(
                                   height: 60,

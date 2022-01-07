@@ -64,9 +64,10 @@ class _AnimatedAddDrinkButtonState extends State<AnimatedAddDrinkButton>
       builder: (context, value, child) => InkWell(
         onTap: () async {
           if (!value.isAddButtonExpanded) {
-            value.updateDrink(value.selectedCup.capacity);
-            _animationController2.reset();
-            _animationController2.forward();
+            value.updateDrink(value.selectedCup.capacity).then((value) {
+              _animationController2.reset();
+              _animationController2.forward();
+            });
           } else {
             value.toggleIsAddButtonExpanded();
             _animationController.reverse();
@@ -174,9 +175,10 @@ class _AnimatedAddDrinkButtonState extends State<AnimatedAddDrinkButton>
                                 absorbing: !value.isAddButtonExpanded,
                                 child: GestureDetector(
                                   onTap: () {
-                                    value.reset();
-                                    value.toggleIsAddButtonExpanded();
-                                    _animationController.reverse();
+                                    value.reset().then((_) {
+                                      value.toggleIsAddButtonExpanded();
+                                      _animationController.reverse();
+                                    });
                                   },
                                   child: Column(
                                     children: [

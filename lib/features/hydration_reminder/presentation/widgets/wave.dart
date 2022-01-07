@@ -3,10 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class Wave extends StatefulWidget {
-  const Wave({Key? key, required this.currentDrink, required this.drinkTarget})
-      : super(key: key);
-  final int currentDrink;
-  final int drinkTarget;
+  const Wave({Key? key, required this.percentage}) : super(key: key);
+  final double percentage;
 
   @override
   _WaveState createState() => _WaveState();
@@ -50,8 +48,8 @@ class _WaveState extends State<Wave> with TickerProviderStateMixin {
 
   void startAnimation() {
     Future.delayed(const Duration(milliseconds: 500)).whenComplete(() {
-      _animationController1.forward();
-      _animationController2.forward();
+      _animationController1.repeat();
+      _animationController2.repeat();
       _animationController3.forward();
     });
   }
@@ -70,7 +68,7 @@ class _WaveState extends State<Wave> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     _points = initPoints();
-    _percentage = widget.currentDrink / widget.drinkTarget;
+    _percentage = widget.percentage;
     final _screenSize = MediaQuery.of(context).size;
 
     return Stack(

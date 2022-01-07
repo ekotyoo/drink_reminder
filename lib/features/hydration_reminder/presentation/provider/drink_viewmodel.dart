@@ -1,7 +1,8 @@
 import 'package:drink_reminder/common/db_helper.dart';
+import 'package:drink_reminder/features/hydration_history/domain/entities/history.dart';
 import 'package:drink_reminder/features/hydration_reminder/domain/entities/cup.dart';
-import 'package:drink_reminder/features/hydration_reminder/domain/entities/hydration.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get_storage/get_storage.dart';
 
 class DrinkModel extends ChangeNotifier {
   int _drinkTarget = 1290;
@@ -13,9 +14,15 @@ class DrinkModel extends ChangeNotifier {
 
   bool _isCompleted = false;
   bool get isCompleted => _isCompleted;
-  void toggleIsCompleted() {
-    _isCompleted = !_isCompleted;
-    _currentDrink = 0;
+  void toggleIsCompleted(bool value) {
+    _isCompleted = value;
+    notifyListeners();
+  }
+
+  bool _showSuccess = false;
+  bool get showSuccess => _showSuccess;
+  void toggleShowSuccess(bool value) {
+    _showSuccess = value;
     notifyListeners();
   }
 
@@ -28,51 +35,51 @@ class DrinkModel extends ChangeNotifier {
 
   int _currentDrink = 0;
   int get currentDrink => _currentDrink;
-  void updateDrink(int value) {
-    if (_currentDrink + value < _drinkTarget) {
-      try {
-        DatabaseHelper.instance
-            .insertHydration(Hydration(
-          id: 1,
-          value: value,
-          createdAt: DateTime.now(),
-        ))
-            .then((value) {
-          refresh();
-        });
-      } catch (e) {
-        print(e.toString());
-      }
-    } else {
-      reset();
-      toggleIsCompleted();
+  Future<void> updateDrink(int value) async {
+    int _newValue = _currentDrink + value;
+    cacheCurrentDrink(_newValue).then((_) {
+      refresh();
+      notifyListeners();
+    });
+    if (_newValue > _drinkTarget) {
+      toggleIsCompleted(true);
+      toggleShowSuccess(true);
     }
   }
 
   void refresh() async {
-    final hydrations = await DatabaseHelper.instance.currentHydrations();
-    int _newValue = 0;
-    for (var element in hydrations) {
-      _newValue += element.value;
-    }
-    _currentDrink = _newValue;
-    notifyListeners();
+    final box = GetStorage();
+    int? _newValue = box.read('current_drink');
+    _currentDrink = _newValue ?? 0;
   }
 
-  void reset() {
-    DatabaseHelper.instance.reset().then((value) => _currentDrink = 0);
+  Future<void> reset() async {
+    await cacheCurrentDrink(0);
+    toggleIsCompleted(false);
+    toggleShowSuccess(false);
     notifyListeners();
   }
 
   void undo() async {
-    if (_currentDrink - _selectedCup.capacity >= 0) {
-      try {
-        await DatabaseHelper.instance
-            .deleteLastDrink()
-            .then((value) => refresh());
-      } catch (e) {
-        print(e.toString());
-      }
+    final int _newValue = _currentDrink - _selectedCup.capacity;
+    if (_newValue > 0) {
+      cacheCurrentDrink(_newValue).then((_) {
+        refresh();
+      });
+    } else {
+      reset();
+    }
+    notifyListeners();
+  }
+
+  Future<void> cacheCurrentDrink(int newValue) async {
+    final box = GetStorage();
+    try {
+      await box
+          .write('current_drink', newValue)
+          .then((value) => _currentDrink = newValue);
+    } catch (e) {
+      // ! TODO: Implement error handling
     }
     notifyListeners();
   }

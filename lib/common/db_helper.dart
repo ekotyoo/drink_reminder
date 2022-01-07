@@ -1,3 +1,4 @@
+import 'package:drink_reminder/features/hydration_history/domain/entities/history.dart';
 import 'package:drink_reminder/features/hydration_reminder/domain/entities/hydration.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -21,6 +22,38 @@ class DatabaseHelper {
   Future _onCreate(Database db, int version) async {
     await db.execute(
         '''CREATE TABLE hydrations(id INTEGER PRIMARY KEY, value INTEGER, millisSinceEpoch INTEGER)''');
+    await db.execute(
+        '''CREATE TABLE histories(id INTEGER PRIMARY KEY, value INTEGER, millisSinceEpoch INTEGER)''');
+  }
+
+  Future<void> insertOrUpdateHistory(History history) async {
+    Database db = await instance.database;
+    final History? todayHistory = await getTodayHistory();
+    if (todayHistory != null) {
+      await db.update('histories', history.toMap(),
+          where: 'id = ?',
+          whereArgs: [history.id],
+          conflictAlgorithm: ConflictAlgorithm.replace);
+    } else {
+      await db.insert('histories', history.toMap(),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+    }
+  }
+
+  Future<History?> getTodayHistory() async {
+    Database db = await instance.database;
+    final now = DateTime.now();
+    final result = await db.query('histories',
+        where: 'millisSinceEpoch BETWEEN ? AND ?',
+        whereArgs: [
+          DateTime(now.year, now.month, now.day).millisecondsSinceEpoch,
+          DateTime(now.year, now.month, now.day, 24, 59, 59)
+              .millisecondsSinceEpoch
+        ]);
+    if (result.isEmpty) {
+      return null;
+    }
+    return History.fromMap(result.first);
   }
 
   // Add record to hydrations table

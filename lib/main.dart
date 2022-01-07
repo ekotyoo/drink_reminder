@@ -1,12 +1,15 @@
 import 'package:drink_reminder/common/theme.dart';
+import 'package:drink_reminder/features/hydration_history/presentation/providers/hydration_history_viewmodel.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/pages/landing_page.dart';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:provider/provider.dart';
 
 import 'features/hydration_reminder/presentation/provider/drink_viewmodel.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await GetStorage.init();
   runApp(const MyApp());
 }
 
@@ -17,8 +20,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (context) => DrinkModel()),
-          ChangeNotifierProvider(create: (context) => MyTheme())
+          ChangeNotifierProvider<DrinkModel>(create: (context) => DrinkModel()),
+          ChangeNotifierProvider<HydrationHistoryViewModel>(
+              create: (context) => HydrationHistoryViewModel()),
+          ChangeNotifierProvider<MyTheme>(create: (context) => MyTheme())
         ],
         builder: (context, child) => Consumer<MyTheme>(
               builder: (context, value, child) {

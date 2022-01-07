@@ -65,8 +65,9 @@ class _DrinkPageState extends State<DrinkPage> with TickerProviderStateMixin {
                   position: _offsetAnimation,
                   child: Consumer<DrinkModel>(builder: (context, value, child) {
                     return Wave(
-                      currentDrink: value.currentDrink,
-                      drinkTarget: value.drinkTarget,
+                      percentage: value.isCompleted
+                          ? 1
+                          : value.currentDrink / value.drinkTarget,
                     );
                   }),
                 ),
@@ -91,7 +92,9 @@ class _DrinkPageState extends State<DrinkPage> with TickerProviderStateMixin {
                   builder: (context, value, child) => AnimatedWaterValue(
                     animation: _animation,
                     drinkTarget: value.drinkTarget,
-                    currentDrink: value.currentDrink,
+                    remaining: value.isCompleted
+                        ? 0
+                        : value.drinkTarget - value.currentDrink,
                   ),
                 )),
           ],
@@ -106,12 +109,12 @@ class AnimatedWaterValue extends AnimatedWidget {
       {Key? key,
       required this.animation,
       required this.drinkTarget,
-      required this.currentDrink})
+      required this.remaining})
       : super(key: key, listenable: animation);
 
   final Animation<double> animation;
   final int drinkTarget;
-  final int currentDrink;
+  final int remaining;
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +127,7 @@ class AnimatedWaterValue extends AnimatedWidget {
               color: Theme.of(context).colorScheme.secondary),
         ),
         Text(
-          "Remaining: ${drinkTarget - currentDrink} ml",
+          remaining == 0 ? "Goal Achieved!" : "Remaining: $remaining ml",
           style: Theme.of(context)
               .textTheme
               .subtitle1!
