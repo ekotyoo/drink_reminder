@@ -1,5 +1,3 @@
-import 'package:drink_reminder/common/db_helper.dart';
-import 'package:drink_reminder/features/hydration_history/domain/entities/history.dart';
 import 'package:drink_reminder/features/hydration_reminder/domain/entities/cup.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_storage/get_storage.dart';
@@ -44,13 +42,14 @@ class DrinkModel extends ChangeNotifier {
     if (_newValue > _drinkTarget) {
       toggleIsCompleted(true);
       toggleShowSuccess(true);
+      cacheCompleteStatus(true);
     }
   }
 
   void refresh() async {
     final box = GetStorage();
-    int? _newValue = box.read('current_drink');
-    _currentDrink = _newValue ?? 0;
+    int _newValue = await box.read('current_drink');
+    _currentDrink = _newValue;
   }
 
   Future<void> reset() async {
@@ -62,14 +61,30 @@ class DrinkModel extends ChangeNotifier {
 
   void undo() async {
     final int _newValue = _currentDrink - _selectedCup.capacity;
-    if (_newValue > 0) {
+    if (_newValue > _drinkTarget) {
+      cacheCurrentDrink(_drinkTarget - _selectedCup.capacity).then((_) {
+        refresh();
+        toggleIsCompleted(false);
+        notifyListeners();
+      });
+    } else if (_newValue < _drinkTarget && _newValue > 0) {
       cacheCurrentDrink(_newValue).then((_) {
         refresh();
+        toggleIsCompleted(false);
+        notifyListeners();
       });
     } else {
       reset();
     }
-    notifyListeners();
+  }
+
+  Future<void> cacheCompleteStatus(bool value) async {
+    final box = GetStorage();
+    try {
+      await box.write('isCompleted', value).then((value) => _isCompleted);
+    } catch (e) {
+      // ! TODO: Implement error handling
+    }
   }
 
   Future<void> cacheCurrentDrink(int newValue) async {
