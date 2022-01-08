@@ -1,3 +1,5 @@
+import 'package:drink_reminder/common/db_helper.dart';
+import 'package:drink_reminder/features/hydration_history/domain/entities/history.dart';
 import 'package:drink_reminder/features/hydration_reminder/domain/entities/cup.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_storage/get_storage.dart';
@@ -10,10 +12,12 @@ class DrinkModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool _isCompleted = false;
+  bool _isCompleted = GetStorage().read('isCompleted') ?? false;
+
   bool get isCompleted => _isCompleted;
   void toggleIsCompleted(bool value) {
     _isCompleted = value;
+    cacheCompleteStatus(value);
     notifyListeners();
   }
 
@@ -42,7 +46,8 @@ class DrinkModel extends ChangeNotifier {
     if (_newValue > _drinkTarget) {
       toggleIsCompleted(true);
       toggleShowSuccess(true);
-      cacheCompleteStatus(true);
+      DatabaseHelper.instance.insertOrUpdateHistory(
+          History(value: _newValue, createdAt: DateTime.now()));
     }
   }
 
