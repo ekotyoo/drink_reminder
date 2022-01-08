@@ -5,6 +5,14 @@ import 'package:flutter/widgets.dart';
 import 'package:get_storage/get_storage.dart';
 
 class DrinkModel extends ChangeNotifier {
+  Future<void> init() async {
+    final box = GetStorage();
+    final bool? newIsCompleted = box.read("isCompleted");
+    final int? newCurrentDrink = box.read("current_drink");
+    _isCompleted = newIsCompleted ?? false;
+    _currentDrink = newCurrentDrink ?? 0;
+  }
+
   int _drinkTarget = 1290;
   int get drinkTarget => _drinkTarget;
   set drinkTarget(int target) {
@@ -12,8 +20,7 @@ class DrinkModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool _isCompleted = GetStorage().read('isCompleted') ?? false;
-
+  bool _isCompleted = false;
   bool get isCompleted => _isCompleted;
   void toggleIsCompleted(bool value) {
     _isCompleted = value;
