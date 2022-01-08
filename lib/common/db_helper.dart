@@ -24,13 +24,21 @@ class DatabaseHelper {
         '''CREATE TABLE histories(id INTEGER PRIMARY KEY, value INTEGER, millisSinceEpoch INTEGER)''');
   }
 
-  Future<void> insertOrUpdateHistory(History history) async {
+  Future<void> insertOrUpdateHistory(History newHistory) async {
     final History? todayHistory = await getTodayHistory();
     if (todayHistory != null) {
-      updateHistory(history);
+      updateHistory(History(
+          id: todayHistory.id,
+          value: newHistory.value,
+          createdAt: DateTime.now()));
     } else {
-      insertHistory(history);
+      insertHistory(newHistory);
     }
+  }
+
+  Future<void> deleteHistory(String id) async {
+    Database db = await instance.database;
+    await db.delete('histories', where: 'id = ?', whereArgs: [id]);
   }
 
   Future<History?> getTodayHistory() async {

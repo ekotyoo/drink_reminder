@@ -47,6 +47,8 @@ class DrinkModel extends ChangeNotifier {
   Future<void> updateDrink(int value) async {
     int _newValue = _currentDrink + value;
     cacheCurrentDrink(_newValue).then((_) {
+      DatabaseHelper.instance.insertOrUpdateHistory(
+          History(value: _newValue, createdAt: DateTime.now()));
       refresh();
       notifyListeners();
     });
@@ -66,6 +68,8 @@ class DrinkModel extends ChangeNotifier {
 
   Future<void> reset() async {
     await cacheCurrentDrink(0);
+    DatabaseHelper.instance
+        .insertOrUpdateHistory(History(value: 0, createdAt: DateTime.now()));
     toggleIsCompleted(false);
     toggleShowSuccess(false);
     notifyListeners();
@@ -79,12 +83,17 @@ class DrinkModel extends ChangeNotifier {
         toggleIsCompleted(false);
         notifyListeners();
       });
+      DatabaseHelper.instance.insertOrUpdateHistory(History(
+          value: _drinkTarget - _selectedCup.capacity,
+          createdAt: DateTime.now()));
     } else if (_newValue < _drinkTarget && _newValue > 0) {
       cacheCurrentDrink(_newValue).then((_) {
         refresh();
         toggleIsCompleted(false);
         notifyListeners();
       });
+      DatabaseHelper.instance.insertOrUpdateHistory(
+          History(value: _newValue, createdAt: DateTime.now()));
     } else {
       reset();
     }
