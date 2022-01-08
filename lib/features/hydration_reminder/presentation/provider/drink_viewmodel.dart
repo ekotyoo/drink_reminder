@@ -1,8 +1,18 @@
+import 'package:drink_reminder/common/db_helper.dart';
+import 'package:drink_reminder/features/hydration_history/domain/entities/history.dart';
 import 'package:drink_reminder/features/hydration_reminder/domain/entities/cup.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_storage/get_storage.dart';
 
 class DrinkModel extends ChangeNotifier {
+  Future<void> init() async {
+    final box = GetStorage();
+    final bool? newIsCompleted = box.read("isCompleted");
+    final int? newCurrentDrink = box.read("current_drink");
+    _isCompleted = newIsCompleted ?? false;
+    _currentDrink = newCurrentDrink ?? 0;
+  }
+
   int _drinkTarget = 1290;
   int get drinkTarget => _drinkTarget;
   set drinkTarget(int target) {
@@ -14,6 +24,7 @@ class DrinkModel extends ChangeNotifier {
   bool get isCompleted => _isCompleted;
   void toggleIsCompleted(bool value) {
     _isCompleted = value;
+    cacheCompleteStatus(value);
     notifyListeners();
   }
 
@@ -36,13 +47,16 @@ class DrinkModel extends ChangeNotifier {
   Future<void> updateDrink(int value) async {
     int _newValue = _currentDrink + value;
     cacheCurrentDrink(_newValue).then((_) {
+      DatabaseHelper.instance.insertOrUpdateHistory(
+          History(value: _newValue, createdAt: DateTime.now()));
       refresh();
       notifyListeners();
     });
     if (_newValue > _drinkTarget) {
       toggleIsCompleted(true);
       toggleShowSuccess(true);
-      cacheCompleteStatus(true);
+      DatabaseHelper.instance.insertOrUpdateHistory(
+          History(value: _newValue, createdAt: DateTime.now()));
     }
   }
 
@@ -54,6 +68,8 @@ class DrinkModel extends ChangeNotifier {
 
   Future<void> reset() async {
     await cacheCurrentDrink(0);
+    DatabaseHelper.instance
+        .insertOrUpdateHistory(History(value: 0, createdAt: DateTime.now()));
     toggleIsCompleted(false);
     toggleShowSuccess(false);
     notifyListeners();
@@ -67,12 +83,17 @@ class DrinkModel extends ChangeNotifier {
         toggleIsCompleted(false);
         notifyListeners();
       });
+      DatabaseHelper.instance.insertOrUpdateHistory(History(
+          value: _drinkTarget - _selectedCup.capacity,
+          createdAt: DateTime.now()));
     } else if (_newValue < _drinkTarget && _newValue > 0) {
       cacheCurrentDrink(_newValue).then((_) {
         refresh();
         toggleIsCompleted(false);
         notifyListeners();
       });
+      DatabaseHelper.instance.insertOrUpdateHistory(
+          History(value: _newValue, createdAt: DateTime.now()));
     } else {
       reset();
     }

@@ -20,8 +20,6 @@ class _DrinkPageState extends State<DrinkPage> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    super.initState();
-    Provider.of<DrinkModel>(context, listen: false).refresh();
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 1000));
     _addButtonAnimationController = AnimationController(
@@ -31,7 +29,14 @@ class _DrinkPageState extends State<DrinkPage> with TickerProviderStateMixin {
     _offsetAnimation =
         Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero).animate(
             CurvedAnimation(parent: _animationController, curve: Curves.ease));
-    _animationController.forward();
+
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    Provider.of<DrinkModel>(context, listen: false).init();
+    super.didChangeDependencies();
   }
 
   @override

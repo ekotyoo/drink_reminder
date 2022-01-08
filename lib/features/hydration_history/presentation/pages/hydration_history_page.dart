@@ -1,5 +1,4 @@
-import 'dart:math';
-
+import 'package:drink_reminder/features/hydration_history/domain/entities/history.dart';
 import 'package:drink_reminder/features/hydration_history/presentation/providers/hydration_history_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -14,9 +13,9 @@ class HydrationHistoryPage extends StatefulWidget {
 
 class _HydrationHistoryPageState extends State<HydrationHistoryPage> {
   @override
-  void initState() {
-    Provider.of<HydrationHistoryViewModel>(context, listen: false).getHistory();
-    super.initState();
+  void didChangeDependencies() {
+    Provider.of<HydrationHistoryViewModel>(context, listen: false).init();
+    super.didChangeDependencies();
   }
 
   @override
@@ -49,10 +48,13 @@ class _HydrationHistoryPageState extends State<HydrationHistoryPage> {
               ),
             ),
             const SizedBox(height: 20),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: DayModeGraph(),
-            ),
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Consumer<HydrationHistoryViewModel>(
+                  builder: (context, value, child) => DayModeGraph(
+                    data: value.currentWeekHistory,
+                  ),
+                )),
             Expanded(child: Container())
           ],
         ),
@@ -62,9 +64,9 @@ class _HydrationHistoryPageState extends State<HydrationHistoryPage> {
 }
 
 class DayModeGraph extends StatefulWidget {
-  const DayModeGraph({
-    Key? key,
-  }) : super(key: key);
+  const DayModeGraph({Key? key, required this.data}) : super(key: key);
+
+  final List<History?> data;
 
   @override
   State<DayModeGraph> createState() => _DayModeGraphState();
@@ -131,11 +133,13 @@ class _DayModeGraphState extends State<DayModeGraph>
                               .withOpacity(0.5),
                         ),
                   ),
-                  Text(
-                    "1.84 L",
-                    style: Theme.of(context).textTheme.headline4!.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.secondary),
+                  Consumer<HydrationHistoryViewModel>(
+                    builder: (context, value, child) => Text(
+                      "${value.average.toStringAsFixed(2)} L",
+                      style: Theme.of(context).textTheme.headline4!.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.secondary),
+                    ),
                   ),
                 ],
               ),
@@ -145,9 +149,20 @@ class _DayModeGraphState extends State<DayModeGraph>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
-            children: Days.values.map(
-              (e) {
-                final double value = Random().nextDouble().clamp(0.2, 1);
+            children: List.generate(
+              7,
+              (index) {
+                final History? history = widget.data[index];
+
+                double value = 0.0;
+                if (history != null) {
+                  value = history.value.toDouble();
+                }
+                final highestValue =
+                    Provider.of<HydrationHistoryViewModel>(context)
+                        .highestValue
+                        .toDouble();
+                final height = (value / highestValue) * 100;
                 return SizedBox(
                   height: 150 + 8 + 36,
                   child: Column(
@@ -156,35 +171,38 @@ class _DayModeGraphState extends State<DayModeGraph>
                     children: [
                       AnimatedBuilder(
                         animation: _animation,
-                        builder: (context, child) => Container(
-                          height: _animation.value * value * 150,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 0, vertical: 8),
-                          width: 36,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).primaryColor,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: SizedBox(
-                            child: Text(
-                              value.toStringAsPrecision(2),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1!
-                                  .copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      color: Theme.of(context)
-                                          .scaffoldBackgroundColor),
-                              textAlign: TextAlign.center,
+                        builder: (context, child) {
+                          return Container(
+                            height:
+                                value == 0 ? 0 : _animation.value * height + 50,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 0, vertical: 8),
+                            width: 36,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).primaryColor,
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                          ),
-                        ),
+                            child: SizedBox(
+                              child: Text(
+                                (value / 1000).toStringAsPrecision(2),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: Theme.of(context)
+                                            .scaffoldBackgroundColor),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          );
+                        },
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        e.name
-                            .substring(0, 2)
-                            .replaceFirst(e.name[0], e.name[0].toUpperCase()),
+                        Days.values[index].name.substring(0, 2).replaceFirst(
+                            Days.values[index].name[0],
+                            Days.values[index].name[0].toUpperCase()),
                         style: Theme.of(context).textTheme.subtitle1!.copyWith(
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context)
