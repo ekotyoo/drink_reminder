@@ -35,9 +35,7 @@ class _DrinkPageState extends State<DrinkPage> with TickerProviderStateMixin {
 
   @override
   void didChangeDependencies() {
-    Provider.of<DrinkModel>(context, listen: false)
-        .init()
-        .then((value) => _animationController.forward());
+    Provider.of<DrinkModel>(context, listen: false).init();
     super.didChangeDependencies();
   }
 

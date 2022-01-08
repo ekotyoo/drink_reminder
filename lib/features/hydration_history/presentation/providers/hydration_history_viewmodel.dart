@@ -1,4 +1,6 @@
 import 'package:drink_reminder/common/db_helper.dart';
+import 'package:drink_reminder/common/helpers.dart';
+import 'package:drink_reminder/features/hydration_history/domain/entities/history.dart';
 import 'package:flutter/cupertino.dart';
 
 enum HistoryMode { day, week, month, year }
@@ -12,8 +14,15 @@ class HydrationHistoryViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void getHistory() async {
-    final result = await DatabaseHelper.instance.getTodayHistory();
+  Future<List<History>> getAllHistory() async {
+    final result = await DatabaseHelper.instance.getAllHistory();
     print(result);
+    return result;
+  }
+
+  Future<List<History?>> getCurrentWeekHistory() async {
+    final result = await DatabaseHelper.instance.getCurrentWeekHistory();
+    print(result);
+    return result;
   }
 }

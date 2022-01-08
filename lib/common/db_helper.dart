@@ -1,3 +1,4 @@
+import 'package:drink_reminder/common/helpers.dart';
 import 'package:drink_reminder/features/hydration_history/domain/entities/history.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -46,6 +47,55 @@ class DatabaseHelper {
       return null;
     }
     return History.fromMap(result.first);
+  }
+
+  Future<List<History>> getAllHistory() async {
+    Database db = await instance.database;
+    final now = DateTime.now();
+    final result = await db.query('histories',
+        where: 'millisSinceEpoch BETWEEN ? AND ?',
+        whereArgs: [
+          DateTime(now.year, now.month, now.day).millisecondsSinceEpoch,
+          DateTime(now.year, now.month, now.day, 24, 59, 59)
+              .millisecondsSinceEpoch
+        ]);
+    if (result.isEmpty) {
+      return [];
+    }
+    return result.map((e) => History.fromMap(e)).toList();
+  }
+
+  Future<List<History?>> getCurrentWeekHistory() async {
+    Database db = await instance.database;
+    final now = DateTime.now();
+    final result = await db.query('histories',
+        where: 'millisSinceEpoch BETWEEN ? AND ?',
+        whereArgs: [
+          findFirstDateOfTheWeek(DateTime(now.year, now.month, now.day))
+              .millisecondsSinceEpoch,
+          findLastDateOfTheWeek(
+                  DateTime(now.year, now.month, now.day, 24, 59, 59))
+              .millisecondsSinceEpoch
+        ]);
+    final List<History?> list = List.filled(7, null);
+
+    if (result.isEmpty) {
+      return list;
+    }
+
+    for (var i = 0; i < 7; i++) {
+      var tempDate =
+          findFirstDateOfTheWeek(DateTime(now.year, now.month, now.day))
+              .add(Duration(days: i));
+      for (var item in result) {
+        if (tempDate.day ==
+            DateTime.fromMillisecondsSinceEpoch(item['millisSinceEpoch'] as int)
+                .day) {
+          list[i] = History.fromMap(item);
+        }
+      }
+    }
+    return list;
   }
 
   // Add record to histories table

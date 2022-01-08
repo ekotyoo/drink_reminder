@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:drink_reminder/features/hydration_history/domain/entities/history.dart';
 import 'package:drink_reminder/features/hydration_history/presentation/providers/hydration_history_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,7 +16,6 @@ class HydrationHistoryPage extends StatefulWidget {
 class _HydrationHistoryPageState extends State<HydrationHistoryPage> {
   @override
   void initState() {
-    Provider.of<HydrationHistoryViewModel>(context, listen: false).getHistory();
     super.initState();
   }
 
@@ -49,9 +49,19 @@ class _HydrationHistoryPageState extends State<HydrationHistoryPage> {
               ),
             ),
             const SizedBox(height: 20),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: DayModeGraph(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: FutureBuilder(
+                  future: Provider.of<HydrationHistoryViewModel>(context)
+                      .getCurrentWeekHistory(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return DayModeGraph(
+                        data: snapshot.data as List<History?>,
+                      );
+                    }
+                    return CircularProgressIndicator();
+                  }),
             ),
             Expanded(child: Container())
           ],
@@ -62,9 +72,9 @@ class _HydrationHistoryPageState extends State<HydrationHistoryPage> {
 }
 
 class DayModeGraph extends StatefulWidget {
-  const DayModeGraph({
-    Key? key,
-  }) : super(key: key);
+  const DayModeGraph({Key? key, required this.data}) : super(key: key);
+
+  final List<History?> data;
 
   @override
   State<DayModeGraph> createState() => _DayModeGraphState();
