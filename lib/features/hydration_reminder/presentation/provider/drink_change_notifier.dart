@@ -1,10 +1,20 @@
 import 'package:drink_reminder/common/db_helper.dart';
 import 'package:drink_reminder/features/hydration_history/domain/entities/history.dart';
 import 'package:drink_reminder/features/hydration_reminder/domain/entities/cup.dart';
+import 'package:drink_reminder/features/hydration_reminder/domain/usecases/delete_hydration.dart';
+import 'package:drink_reminder/features/hydration_reminder/domain/usecases/get_hydration.dart';
+import 'package:drink_reminder/features/hydration_reminder/domain/usecases/insert_or_update_hydration.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_storage/get_storage.dart';
 
-class DrinkModel extends ChangeNotifier {
+class HydrationChangeNotifier extends ChangeNotifier {
+  final InsertOrUpdateHydration insertOrUpdateHydration;
+  final GetHydration getHydration;
+  final DeleteHydration deleteHydration;
+
+  HydrationChangeNotifier(
+      this.insertOrUpdateHydration, this.getHydration, this.deleteHydration);
+
   Future<void> init() async {
     final box = GetStorage();
     _isCompleted = box.read("isCompleted") ?? false;

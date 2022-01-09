@@ -1,5 +1,5 @@
 import 'package:drink_reminder/features/hydration_reminder/domain/entities/cup.dart';
-import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_viewmodel.dart';
+import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_change_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -58,9 +58,9 @@ class CupItem extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       onTap: () {
-        context.read<DrinkModel>().setSelectedCup(cup);
+        context.read<HydrationChangeNotifier>().setSelectedCup(cup);
       },
-      child: Consumer<DrinkModel>(
+      child: Consumer<HydrationChangeNotifier>(
         builder: (context, value, child) {
           return AnimatedContainer(
             duration: const Duration(milliseconds: 500),
@@ -68,7 +68,8 @@ class CupItem extends StatelessWidget {
             height: 70,
             width: 168,
             decoration: BoxDecoration(
-              color: context.read<DrinkModel>().selectedCup.id == cup.id
+              color: context.read<HydrationChangeNotifier>().selectedCup.id ==
+                      cup.id
                   ? Theme.of(context).primaryColor
                   : Theme.of(context).primaryColor.withOpacity(0.4),
               borderRadius: BorderRadius.circular(12),

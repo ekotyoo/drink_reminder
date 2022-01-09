@@ -1,5 +1,5 @@
 import 'package:drink_reminder/common/theme.dart';
-import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_viewmodel.dart';
+import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_change_notifier.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/widgets/animated_add_drink_button.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/widgets/wave.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +35,7 @@ class _DrinkPageState extends State<DrinkPage> with TickerProviderStateMixin {
 
   @override
   void didChangeDependencies() {
-    Provider.of<DrinkModel>(context, listen: false).init();
+    Provider.of<HydrationChangeNotifier>(context, listen: false).init();
     super.didChangeDependencies();
   }
 
@@ -54,7 +54,7 @@ class _DrinkPageState extends State<DrinkPage> with TickerProviderStateMixin {
       body: SafeArea(
         child: Stack(
           children: [
-            Consumer<MyTheme>(
+            Consumer<ThemeChangeNotifier>(
               builder: (context, provider, child) => Switch(
                 value: provider.isDarkTheme ? true : false,
                 onChanged: (value) {
@@ -68,7 +68,8 @@ class _DrinkPageState extends State<DrinkPage> with TickerProviderStateMixin {
                 opacity: _animation,
                 child: SlideTransition(
                   position: _offsetAnimation,
-                  child: Consumer<DrinkModel>(builder: (context, value, child) {
+                  child: Consumer<HydrationChangeNotifier>(
+                      builder: (context, value, child) {
                     return Wave(
                       percentage: value.isCompleted
                           ? 1
@@ -93,7 +94,7 @@ class _DrinkPageState extends State<DrinkPage> with TickerProviderStateMixin {
                 top: 150,
                 left: 0,
                 right: 0,
-                child: Consumer<DrinkModel>(
+                child: Consumer<HydrationChangeNotifier>(
                   builder: (context, value, child) => AnimatedWaterValue(
                     animation: _animation,
                     drinkTarget: value.drinkTarget,

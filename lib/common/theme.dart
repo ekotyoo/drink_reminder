@@ -2,7 +2,7 @@ import 'package:drink_reminder/common/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class MyTheme with ChangeNotifier {
+class ThemeChangeNotifier with ChangeNotifier {
   static ThemeData light() {
     return ThemeData(
       brightness: Brightness.light,

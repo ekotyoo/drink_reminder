@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 enum HistoryMode { day, week, month, year }
 enum Days { monday, tuesday, wednesday, thursday, friday, saturday, sunday }
 
-class HydrationHistoryViewModel extends ChangeNotifier {
+class HydrationHistoryChangeNotifier extends ChangeNotifier {
   Future<void> init() async {
     _currentWeekHistory = await getCurrentWeekHistory();
     _average = _calculateAverage();

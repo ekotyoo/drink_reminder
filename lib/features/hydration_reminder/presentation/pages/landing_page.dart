@@ -2,7 +2,7 @@ import 'package:drink_reminder/common/widgets/custom_bottom_navigation_bar.dart'
 import 'package:drink_reminder/features/hydration_reminder/presentation/pages/current_hidration_page.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/pages/drink_page.dart';
 import 'package:drink_reminder/features/hydration_history/presentation/pages/hydration_history_page.dart';
-import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_viewmodel.dart';
+import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_change_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -66,7 +66,7 @@ class _LandingPageState extends State<LandingPage>
               currentIndex: _selectedPage,
             ),
           ),
-          Consumer<DrinkModel>(
+          Consumer<HydrationChangeNotifier>(
             builder: (context, provider, child) {
               if (provider.showSuccess) {
                 _animationController.forward();
