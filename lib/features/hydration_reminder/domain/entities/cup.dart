@@ -5,14 +5,14 @@ class Cup {
   final int id;
   final String name;
   final Color color;
-  final IconData image;
+  final String imagePath;
   final int capacity;
 
   const Cup(
       {required this.id,
       required this.name,
       required this.color,
-      required this.image,
+      required this.imagePath,
       required this.capacity});
 }
 
@@ -21,24 +21,24 @@ const List<Cup> cups = [
       id: 1,
       name: "Water",
       color: MyColor.primaryColor,
-      image: Icons.water,
+      imagePath: 'assets/icons/cup1.svg',
       capacity: 250),
   Cup(
       id: 2,
       name: "Bottle",
       color: MyColor.primaryColor,
-      image: Icons.battery_full,
+      imagePath: 'assets/icons/cup2.svg',
       capacity: 500),
   Cup(
       id: 3,
       name: "Cup",
       color: MyColor.primaryColor,
-      image: Icons.coffee,
+      imagePath: 'assets/icons/cup3.svg',
       capacity: 180),
   Cup(
       id: 4,
       name: "Glass",
       color: MyColor.primaryColor,
-      image: Icons.coffee,
+      imagePath: 'assets/icons/cup4.svg',
       capacity: 250),
 ];

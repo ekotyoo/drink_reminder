@@ -1,6 +1,7 @@
 import 'package:drink_reminder/features/hydration_reminder/domain/entities/cup.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/provider/hydration_change_notifier.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class CupList extends AnimatedWidget {
@@ -76,8 +77,12 @@ class CupItem extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(cup.image,
-                    color: Theme.of(context).colorScheme.secondary, size: 24),
+                SvgPicture.asset(
+                  cup.imagePath,
+                  color: Theme.of(context).colorScheme.secondary,
+                  height: 30,
+                  width: 30,
+                ),
                 const SizedBox(width: 8),
                 Text("${cup.capacity} ml",
                     style: Theme.of(context)

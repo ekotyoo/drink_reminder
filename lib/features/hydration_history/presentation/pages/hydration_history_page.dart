@@ -51,7 +51,7 @@ class _HydrationHistoryPageState extends State<HydrationHistoryPage> {
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Consumer<HydrationHistoryChangeNotifier>(
-                  builder: (context, value, child) => DayModeGraph(
+                  builder: (context, value, child) => WeeklyGraph(
                     data: value.currentWeekHistory,
                   ),
                 )),
@@ -63,16 +63,16 @@ class _HydrationHistoryPageState extends State<HydrationHistoryPage> {
   }
 }
 
-class DayModeGraph extends StatefulWidget {
-  const DayModeGraph({Key? key, required this.data}) : super(key: key);
+class WeeklyGraph extends StatefulWidget {
+  const WeeklyGraph({Key? key, required this.data}) : super(key: key);
 
   final List<History?> data;
 
   @override
-  State<DayModeGraph> createState() => _DayModeGraphState();
+  State<WeeklyGraph> createState() => _WeeklyGraphState();
 }
 
-class _DayModeGraphState extends State<DayModeGraph>
+class _WeeklyGraphState extends State<WeeklyGraph>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -145,7 +145,7 @@ class _DayModeGraphState extends State<DayModeGraph>
               ),
             ],
           ),
-          const SizedBox(height: 36),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -172,29 +172,47 @@ class _DayModeGraphState extends State<DayModeGraph>
                       AnimatedBuilder(
                         animation: _animation,
                         builder: (context, child) {
-                          return Container(
-                            height:
-                                value == 0 ? 0 : _animation.value * height + 50,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 0, vertical: 8),
-                            width: 36,
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).primaryColor,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: SizedBox(
-                              child: Text(
-                                (value / 1000).toStringAsPrecision(2),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .copyWith(
-                                        fontWeight: FontWeight.w600,
-                                        color: Theme.of(context)
-                                            .scaffoldBackgroundColor),
-                                textAlign: TextAlign.center,
+                          return Stack(
+                            alignment: Alignment.bottomCenter,
+                            children: [
+                              Container(
+                                  width: 36,
+                                  height: 100 + 50,
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context)
+                                        .primaryColor
+                                        .withOpacity(0.15),
+                                    borderRadius: BorderRadius.circular(12),
+                                  )),
+                              Container(
+                                height: value == 0
+                                    ? 0
+                                    : _animation.value * height + 50,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 0, vertical: 8),
+                                width: 36,
+                                decoration: BoxDecoration(
+                                  color: history?.createdAt.day ==
+                                          DateTime.now().day
+                                      ? Theme.of(context).colorScheme.secondary
+                                      : Theme.of(context).primaryColor,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: SizedBox(
+                                  child: Text(
+                                    (value / 1000).toStringAsPrecision(2),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1!
+                                        .copyWith(
+                                            fontWeight: FontWeight.w600,
+                                            color: Theme.of(context)
+                                                .scaffoldBackgroundColor),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           );
                         },
                       ),
@@ -205,10 +223,12 @@ class _DayModeGraphState extends State<DayModeGraph>
                             Days.values[index].name[0].toUpperCase()),
                         style: Theme.of(context).textTheme.subtitle1!.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .secondary
-                                .withOpacity(0.5)),
+                            color: history?.createdAt.day == DateTime.now().day
+                                ? Theme.of(context).colorScheme.secondary
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .secondary
+                                    .withOpacity(0.5)),
                       )
                     ],
                   ),

@@ -59,7 +59,7 @@ class HydrationRepositoryImpl extends HydrationRepository {
   }
 
   @override
-  Future<Either<Failure, void>> updateCompleteStatus(bool value) async {
+  Future<Either<Failure, void>> insertOrUpdateCompleteStatus(bool value) async {
     try {
       await localDatasource.insertOrUpdateCompleteStatus(value);
       return const Right(null);
