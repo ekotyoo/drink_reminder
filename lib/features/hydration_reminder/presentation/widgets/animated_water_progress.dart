@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'dart:ui' as ui;
 
-import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_viewmodel.dart';
+import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_change_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,11 +16,11 @@ class _AnimatedWaterProgressState extends State<AnimatedWaterProgress>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
-  late DrinkModel _provider;
+  late HydrationChangeNotifier _provider;
 
   @override
   void initState() {
-    _provider = context.read<DrinkModel>();
+    _provider = context.read<HydrationChangeNotifier>();
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 1000));
     _animation = Tween<double>(begin: 0, end: 1).animate(
@@ -67,7 +67,7 @@ class WaterProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _provider = context.read<DrinkModel>();
+    final _provider = context.read<HydrationChangeNotifier>();
     return SizedBox(
       height: 240,
       width: 240,

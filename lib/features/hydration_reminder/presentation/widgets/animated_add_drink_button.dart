@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_viewmodel.dart';
+import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_change_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -60,7 +60,7 @@ class _AnimatedAddDrinkButtonState extends State<AnimatedAddDrinkButton>
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<DrinkModel>(
+    return Consumer<HydrationChangeNotifier>(
       builder: (context, value, child) => InkWell(
         onTap: () async {
           if (!value.isAddButtonExpanded) {
@@ -221,7 +221,7 @@ class _AnimatedAddDrinkButtonState extends State<AnimatedAddDrinkButton>
                             child: child,
                           )),
                       child: Text(
-                          "+${context.read<DrinkModel>().selectedCup.capacity} ml",
+                          "+${context.read<HydrationChangeNotifier>().selectedCup.capacity} ml",
                           style: Theme.of(context)
                               .textTheme
                               .headline6!

@@ -1,16 +1,24 @@
 import 'package:drink_reminder/common/db_helper.dart';
 import 'package:drink_reminder/features/hydration_history/domain/entities/history.dart';
 import 'package:drink_reminder/features/hydration_reminder/domain/entities/cup.dart';
+import 'package:drink_reminder/features/hydration_reminder/domain/usecases/delete_hydration.dart';
+import 'package:drink_reminder/features/hydration_reminder/domain/usecases/get_hydration.dart';
+import 'package:drink_reminder/features/hydration_reminder/domain/usecases/insert_or_update_hydration.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_storage/get_storage.dart';
 
-class DrinkModel extends ChangeNotifier {
+class HydrationChangeNotifier extends ChangeNotifier {
+  final InsertOrUpdateHydration insertOrUpdateHydration;
+  final GetHydration getHydration;
+  final DeleteHydration deleteHydration;
+
+  HydrationChangeNotifier(
+      this.insertOrUpdateHydration, this.getHydration, this.deleteHydration);
+
   Future<void> init() async {
     final box = GetStorage();
-    final bool? newIsCompleted = box.read("isCompleted");
-    final int? newCurrentDrink = box.read("current_drink");
-    _isCompleted = newIsCompleted ?? false;
-    _currentDrink = newCurrentDrink ?? 0;
+    _isCompleted = box.read("isCompleted") ?? false;
+    _currentDrink = box.read("current_drink") ?? 0;
   }
 
   int _drinkTarget = 1290;
@@ -47,23 +55,21 @@ class DrinkModel extends ChangeNotifier {
   Future<void> updateDrink(int value) async {
     int _newValue = _currentDrink + value;
     cacheCurrentDrink(_newValue).then((_) {
-      DatabaseHelper.instance.insertOrUpdateHistory(
-          History(value: _newValue, createdAt: DateTime.now()));
       refresh();
-      notifyListeners();
     });
     if (_newValue > _drinkTarget) {
       toggleIsCompleted(true);
       toggleShowSuccess(true);
-      DatabaseHelper.instance.insertOrUpdateHistory(
-          History(value: _newValue, createdAt: DateTime.now()));
     }
+    DatabaseHelper.instance.insertOrUpdateHistory(
+        History(value: _newValue, createdAt: DateTime.now()));
   }
 
-  void refresh() async {
+  Future<void> refresh() async {
     final box = GetStorage();
     int _newValue = await box.read('current_drink');
     _currentDrink = _newValue;
+    notifyListeners();
   }
 
   Future<void> reset() async {
@@ -72,25 +78,22 @@ class DrinkModel extends ChangeNotifier {
         .insertOrUpdateHistory(History(value: 0, createdAt: DateTime.now()));
     toggleIsCompleted(false);
     toggleShowSuccess(false);
-    notifyListeners();
   }
 
-  void undo() async {
+  Future<void> undo() async {
     final int _newValue = _currentDrink - _selectedCup.capacity;
     if (_newValue > _drinkTarget) {
       cacheCurrentDrink(_drinkTarget - _selectedCup.capacity).then((_) {
-        refresh();
         toggleIsCompleted(false);
-        notifyListeners();
+        refresh();
       });
       DatabaseHelper.instance.insertOrUpdateHistory(History(
           value: _drinkTarget - _selectedCup.capacity,
           createdAt: DateTime.now()));
     } else if (_newValue < _drinkTarget && _newValue > 0) {
       cacheCurrentDrink(_newValue).then((_) {
-        refresh();
         toggleIsCompleted(false);
-        notifyListeners();
+        refresh();
       });
       DatabaseHelper.instance.insertOrUpdateHistory(
           History(value: _newValue, createdAt: DateTime.now()));
@@ -117,7 +120,6 @@ class DrinkModel extends ChangeNotifier {
     } catch (e) {
       // ! TODO: Implement error handling
     }
-    notifyListeners();
   }
 
   bool _isAddButtonExpanded = false;

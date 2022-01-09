@@ -1,5 +1,5 @@
 import 'package:drink_reminder/features/hydration_history/domain/entities/history.dart';
-import 'package:drink_reminder/features/hydration_history/presentation/providers/hydration_history_viewmodel.dart';
+import 'package:drink_reminder/features/hydration_history/presentation/providers/hydration_history_change_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +14,7 @@ class HydrationHistoryPage extends StatefulWidget {
 class _HydrationHistoryPageState extends State<HydrationHistoryPage> {
   @override
   void didChangeDependencies() {
-    Provider.of<HydrationHistoryViewModel>(context, listen: false).init();
+    Provider.of<HydrationHistoryChangeNotifier>(context, listen: false).init();
     super.didChangeDependencies();
   }
 
@@ -38,7 +38,7 @@ class _HydrationHistoryPageState extends State<HydrationHistoryPage> {
             const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Consumer<HydrationHistoryViewModel>(
+              child: Consumer<HydrationHistoryChangeNotifier>(
                 builder: (context, provider, child) => Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: HistoryMode.values
@@ -50,7 +50,7 @@ class _HydrationHistoryPageState extends State<HydrationHistoryPage> {
             const SizedBox(height: 20),
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Consumer<HydrationHistoryViewModel>(
+                child: Consumer<HydrationHistoryChangeNotifier>(
                   builder: (context, value, child) => DayModeGraph(
                     data: value.currentWeekHistory,
                   ),
@@ -133,7 +133,7 @@ class _DayModeGraphState extends State<DayModeGraph>
                               .withOpacity(0.5),
                         ),
                   ),
-                  Consumer<HydrationHistoryViewModel>(
+                  Consumer<HydrationHistoryChangeNotifier>(
                     builder: (context, value, child) => Text(
                       "${value.average.toStringAsFixed(2)} L",
                       style: Theme.of(context).textTheme.headline4!.copyWith(
@@ -159,7 +159,7 @@ class _DayModeGraphState extends State<DayModeGraph>
                   value = history.value.toDouble();
                 }
                 final highestValue =
-                    Provider.of<HydrationHistoryViewModel>(context)
+                    Provider.of<HydrationHistoryChangeNotifier>(context)
                         .highestValue
                         .toDouble();
                 final height = (value / highestValue) * 100;
@@ -231,10 +231,10 @@ class HistoryModeItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        context.read<HydrationHistoryViewModel>().selectedMode = mode;
+        context.read<HydrationHistoryChangeNotifier>().selectedMode = mode;
       },
       borderRadius: BorderRadius.circular(20),
-      child: Consumer<HydrationHistoryViewModel>(
+      child: Consumer<HydrationHistoryChangeNotifier>(
         builder: (context, value, child) => AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           curve: Curves.ease,
