@@ -9,6 +9,6 @@ abstract class HydrationRepository {
   Future<Either<Failure, int>> getCurrentHydration();
 
   // Complete Status
-  Future<Either<Failure, void>> updateCompleteStatus(bool value);
+  Future<Either<Failure, void>> insertOrUpdateCompleteStatus(bool value);
   Future<Either<Failure, bool>> getCompleteStatus();
 }

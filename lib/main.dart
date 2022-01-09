@@ -12,6 +12,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   di.init();
   await GetStorage.init();
+  await di.locator<GetStorage>().write('complete_status', false);
   runApp(const MyApp());
 }
 

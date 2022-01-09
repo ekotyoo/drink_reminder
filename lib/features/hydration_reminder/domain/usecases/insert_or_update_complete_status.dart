@@ -8,6 +8,6 @@ class InsertOrUpdateCompleteStatus {
   InsertOrUpdateCompleteStatus(this.repository);
 
   Future<Either<Failure, void>> execute(bool value) async {
-    return repository.updateCompleteStatus(value);
+    return repository.insertOrUpdateCompleteStatus(value);
   }
 }
