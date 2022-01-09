@@ -17,4 +17,4 @@ samples, guidance on mobile development, and a full API reference.
 
 UI Design: https://dribbble.com/shots/15400465-Water-Drinking-Reminder-App
 
-![](preview.gif)
+![](app-preview.gif)
