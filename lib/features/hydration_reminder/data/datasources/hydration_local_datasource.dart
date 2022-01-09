@@ -6,6 +6,8 @@ abstract class HydrationLocalDatasource {
   Future<void> insertOrUpdateHydration(int value);
   Future<void> deleteHydration();
   Future<int> getHydration();
+  Future<void> insertOrUpdateCompleteStatus(bool value);
+  Future<bool> getCompleteStatus();
 }
 
 class HydrationLocalDatasourceImpl extends HydrationLocalDatasource {
@@ -37,6 +39,25 @@ class HydrationLocalDatasourceImpl extends HydrationLocalDatasource {
   Future<void> insertOrUpdateHydration(int value) async {
     try {
       await cacheStorage.write('current_drink', value);
+    } catch (e) {
+      throw CacheException(e.toString());
+    }
+  }
+
+  @override
+  Future<bool> getCompleteStatus() async {
+    try {
+      final result = await cacheStorage.read('complete_status');
+      return result;
+    } catch (e) {
+      throw CacheException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> insertOrUpdateCompleteStatus(bool value) async {
+    try {
+      await cacheStorage.write('complete_status', value);
     } catch (e) {
       throw CacheException(e.toString());
     }

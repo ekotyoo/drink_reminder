@@ -1,5 +1,5 @@
 import 'package:drink_reminder/common/theme.dart';
-import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_change_notifier.dart';
+import 'package:drink_reminder/features/hydration_reminder/presentation/provider/hydration_change_notifier.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/widgets/animated_add_drink_button.dart';
 import 'package:drink_reminder/features/hydration_reminder/presentation/widgets/wave.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +20,10 @@ class _DrinkPageState extends State<DrinkPage> with TickerProviderStateMixin {
 
   @override
   void initState() {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      Provider.of<HydrationChangeNotifier>(context, listen: false).init();
+    });
+
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 1000));
     _addButtonAnimationController = AnimationController(
@@ -35,7 +39,6 @@ class _DrinkPageState extends State<DrinkPage> with TickerProviderStateMixin {
 
   @override
   void didChangeDependencies() {
-    Provider.of<HydrationChangeNotifier>(context, listen: false).init();
     super.didChangeDependencies();
   }
 
@@ -95,13 +98,24 @@ class _DrinkPageState extends State<DrinkPage> with TickerProviderStateMixin {
                 left: 0,
                 right: 0,
                 child: Consumer<HydrationChangeNotifier>(
-                  builder: (context, value, child) => AnimatedWaterValue(
-                    animation: _animation,
-                    drinkTarget: value.drinkTarget,
-                    remaining: value.isCompleted
-                        ? 0
-                        : value.drinkTarget - value.currentDrink,
-                  ),
+                  builder: (context, value, child) {
+                    if (value.state == HydrationState.loaded) {
+                      return AnimatedWaterValue(
+                        animation: _animation,
+                        drinkTarget: value.drinkTarget,
+                        remaining: value.isCompleted
+                            ? 0
+                            : value.drinkTarget - value.currentDrink,
+                      );
+                    } else if (value.state == HydrationState.loading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (value.state == HydrationState.error) {
+                      return const Center(
+                        child: Text('Something went wrong'),
+                      );
+                    }
+                    return const SizedBox();
+                  },
                 )),
           ],
         ),

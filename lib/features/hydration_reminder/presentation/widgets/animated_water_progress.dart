@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'dart:ui' as ui;
 
-import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_change_notifier.dart';
+import 'package:drink_reminder/features/hydration_reminder/presentation/provider/hydration_change_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

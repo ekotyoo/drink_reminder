@@ -5,9 +5,11 @@ import 'package:drink_reminder/features/hydration_reminder/data/datasources/hydr
 import 'package:drink_reminder/features/hydration_reminder/data/repositories/hydration_repository_impl.dart';
 import 'package:drink_reminder/features/hydration_reminder/domain/repositories/hydration_repository.dart';
 import 'package:drink_reminder/features/hydration_reminder/domain/usecases/delete_hydration.dart';
+import 'package:drink_reminder/features/hydration_reminder/domain/usecases/get_complete_status.dart';
 import 'package:drink_reminder/features/hydration_reminder/domain/usecases/get_hydration.dart';
+import 'package:drink_reminder/features/hydration_reminder/domain/usecases/insert_or_update_complete_status.dart';
 import 'package:drink_reminder/features/hydration_reminder/domain/usecases/insert_or_update_hydration.dart';
-import 'package:drink_reminder/features/hydration_reminder/presentation/provider/drink_change_notifier.dart';
+import 'package:drink_reminder/features/hydration_reminder/presentation/provider/hydration_change_notifier.dart';
 import 'package:get_it/get_it.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -15,8 +17,8 @@ final locator = GetIt.instance;
 
 void init() {
   //providers
-  locator.registerFactory(
-      () => HydrationChangeNotifier(locator(), locator(), locator()));
+  locator.registerFactory(() =>
+      HydrationChangeNotifier(locator(), locator(), locator(), locator(), locator()));
   locator.registerFactory(() => HydrationHistoryChangeNotifier());
   locator.registerFactory(() => ThemeChangeNotifier());
 
@@ -24,6 +26,8 @@ void init() {
   locator.registerLazySingleton(() => InsertOrUpdateHydration(locator()));
   locator.registerLazySingleton(() => GetHydration(locator()));
   locator.registerLazySingleton(() => DeleteHydration(locator()));
+  locator.registerLazySingleton(() => InsertOrUpdateCompleteStatus(locator()));
+  locator.registerLazySingleton(() => GetCompleteStatus(locator()));
 
   //repositories
   locator.registerLazySingleton<HydrationRepository>(
