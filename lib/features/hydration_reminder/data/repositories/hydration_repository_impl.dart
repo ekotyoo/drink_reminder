@@ -47,4 +47,24 @@ class HydrationRepositoryImpl extends HydrationRepository {
       return Left(CacheFailure(e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, bool>> getCompleteStatus() async {
+    try {
+      final result = await localDatasource.getCompleteStatus();
+      return Right(result);
+    } on CacheException catch (e) {
+      return Left(CacheFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> updateCompleteStatus(bool value) async {
+    try {
+      await localDatasource.insertOrUpdateCompleteStatus(value);
+      return const Right(null);
+    } on CacheException catch (e) {
+      return Left(CacheFailure(e.message));
+    }
+  }
 }

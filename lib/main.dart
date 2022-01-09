@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:provider/provider.dart';
 
-import 'features/hydration_reminder/presentation/provider/drink_change_notifier.dart';
+import 'features/hydration_reminder/presentation/provider/hydration_change_notifier.dart';
 import '/common/service_locator.dart' as di;
 
 void main() async {
