@@ -73,10 +73,12 @@ class _DrinkPageState extends State<DrinkPage> with TickerProviderStateMixin {
                   position: _offsetAnimation,
                   child: Consumer<HydrationChangeNotifier>(
                       builder: (context, value, child) {
-                    return Wave(
-                      percentage: value.isCompleted
-                          ? 1
-                          : value.currentDrink / value.drinkTarget,
+                    return IgnorePointer(
+                      child: Wave(
+                        percentage: value.isCompleted
+                            ? 1
+                            : value.currentDrink / value.drinkTarget,
+                      ),
                     );
                   }),
                 ),

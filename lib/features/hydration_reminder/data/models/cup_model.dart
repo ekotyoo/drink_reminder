@@ -6,13 +6,13 @@ class CupModel extends Cup {
     int id,
     String name,
     Color color,
-    IconData image,
+    String imagePath,
     int capacity,
   ) : super(
           id: id,
           name: name,
           color: color,
-          image: image,
+          imagePath: imagePath,
           capacity: capacity,
         );
 }
